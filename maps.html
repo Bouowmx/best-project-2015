@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+	html, body, #map-canvas { height: 100%; margin: 0; padding: 0;}
+</style>
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAYeVRIphkYn8LRtRn-i2rQo2lzdTVb7DE"></script>
+<script>
+function initialize() {
+	var mapOptions = {center: {lat: 40.7819, lng: -73.8883}, zoom: 13};
+	map = new google.maps.Map(document.getElementById('map-canvas'),mapOptions);
+	var marker = new google.maps.Marker({position: new google.maps.LatLng(40.7819, -73.8883), map: map, title: "Rikers Island"});
+	google.maps.event.addListener(map, "rightclick", function(event) {new google.maps.Marker({position: new google.maps.LatLng(event.latLng.lat(), event.latLng.lng()), map: map, title: "Your position"});});
+}
+google.maps.event.addDomListener(window, 'load', initialize);
+</script>
+</head>
+<body>
+<div id="map-canvas"></div>
+</body>
+</html>
