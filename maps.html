@@ -13,7 +13,6 @@ function initialize() {
 	var marker_0 = new google.maps.Marker({position: new google.maps.LatLng(40.7819, -73.8883), map: map, title: "Rikers Island"});
 	players[0].marker = marker_0;
 	google.maps.event.addListener(map, "rightclick", function(e) {
-		console.log(e.latLng.lat() + ", " + e.latLng.lng());
 		players[0].marker.position = new google.maps.LatLng(e.latLng.lat(), e.latLng.lng());
 		players[0].marker.setMap(map); //setMap will render the marker.
 	});
