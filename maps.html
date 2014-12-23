@@ -7,10 +7,16 @@
 <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAYeVRIphkYn8LRtRn-i2rQo2lzdTVb7DE"></script>
 <script>
 function initialize() {
-	var mapOptions = {center: {lat: 40.7819, lng: -73.8883}, zoom: 13};
-	map = new google.maps.Map(document.getElementById('map-canvas'),mapOptions);
-	var marker = new google.maps.Marker({position: new google.maps.LatLng(40.7819, -73.8883), map: map, title: "Rikers Island"});
-	google.maps.event.addListener(map, "rightclick", function(event) {new google.maps.Marker({position: new google.maps.LatLng(event.latLng.lat(), event.latLng.lng()), map: map, title: "Your position"});});
+	var players = [];
+	players[0] = {marker: undefined};
+	var map = new google.maps.Map(document.getElementById('map-canvas'), {center: {lat: 40.7819, lng: -73.8883}, zoom: 13});
+	var marker_0 = new google.maps.Marker({position: new google.maps.LatLng(40.7819, -73.8883), map: map, title: "Rikers Island"});
+	players[0].marker = marker_0;
+	google.maps.event.addListener(map, "rightclick", function(e) {
+		console.log(e.latLng.lat() + ", " + e.latLng.lng());
+		players[0].marker.position = new google.maps.LatLng(e.latLng.lat(), e.latLng.lng());
+		players[0].marker.setMap(map); //setMap will render the marker.
+	});
 }
 google.maps.event.addDomListener(window, 'load', initialize);
 </script>
