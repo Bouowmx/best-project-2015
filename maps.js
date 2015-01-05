@@ -1,4 +1,9 @@
 
+var lowerbound = 40.490826256468054;
+var leftbound = -74.26071166992188;
+var rightbound = -73.78074645996094;
+var upperbound = 40.89275342420696;
+
 function circleDrawer(m,c,r){
     return {strokeColor:"FF0000",
             strikeOpacity: 0.6,
@@ -25,7 +30,7 @@ function initialize() {
 		  path: {
 		      origin : 0,
 		      destination : 0,
-		      travelMode: google.maps.TravelMode.WALKING
+		      travelMode: google.maps.TravelMode.DRIVING
 		  } 
 		 };
     players[0].circle = new google.maps.Circle(circleDrawer(map,players[0].marker.position,4000));
@@ -53,11 +58,17 @@ function initialize() {
 	
     });
     google.maps.event.addListener(players[0].circle, "rightclick", function(e) {
-	
-	    players[0].marker.position = new google.maps.LatLng(e.latLng.lat(), e.latLng.lng());
-	    players[0].circle.setCenter(new google.maps.LatLng(e.latLng.lat(), e.latLng.lng()));
+	lat = e.latLng.lat();
+	lng = e.latLng.lng();
+	if (upperbound>lat && lowerbound<lat && leftbound<lng && rightbound>lng){
+	    console.log(e.latLng.lat() + "," + e.latLng.lng());
+	    players[0].marker.position = new google.maps.LatLng(lat,lng);
+	    players[0].circle.setCenter(new google.maps.LatLng(lat,lng));
 	    players[0].marker.setMap(map); //setMap will render the marker.
 	    players[0].circle.setMap(map);
+	}else{
+	    console.log("OUTSIDE");
+	}
 	
     });
     
