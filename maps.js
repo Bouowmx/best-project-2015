@@ -1,12 +1,13 @@
 
-var lowerbound = 40.490826256468054;
+var lowerbound = 40.56898024667195;
 var leftbound = -74.26071166992188;
-var rightbound = -73.78074645996094;
+var rightbound = -73.75211975097656;
 var upperbound = 40.89275342420696;
+var leftboundnosi = -74.0423583984375;
 
 function circleDrawer(m,c,r){
     return {strokeColor:"FF0000",
-            strikeOpacity: 0.6,
+            strokeOpacity: 0.6,
             strokeWeight: 1,
             fillColor: "#FF0000",
             map: m,
@@ -58,19 +59,38 @@ function initialize() {
 	
     });
     google.maps.event.addListener(players[0].circle, "rightclick", function(e) {
-	lat = e.latLng.lat();
-	lng = e.latLng.lng();
-	if (upperbound>lat && lowerbound<lat && leftbound<lng && rightbound>lng){
-	    console.log(e.latLng.lat() + "," + e.latLng.lng());
-	    players[0].marker.position = new google.maps.LatLng(lat,lng);
-	    players[0].circle.setCenter(new google.maps.LatLng(lat,lng));
-	    players[0].marker.setMap(map); //setMap will render the marker.
-	    players[0].circle.setMap(map);
-	}else{
-	    console.log("OUTSIDE");
-	}
+		lat = e.latLng.lat();
+		lng = e.latLng.lng();
+		if (upperbound>lat && lowerbound<lat && leftboundnosi<lng && rightbound>lng){
+		    console.log(e.latLng.lat() + "," + e.latLng.lng());
+		    players[0].marker.position = new google.maps.LatLng(lat,lng);
+		    players[0].circle.setCenter(new google.maps.LatLng(lat,lng));
+		    players[0].marker.setMap(map); //setMap will render the marker.
+		    players[0].circle.setMap(map);
+		}else{
+		    console.log("OUTSIDE");
+		    window.alert("YOU'RE OUTSIDE NEW YORK")
+		}
 	
     });
-    
+
+    var NewYorkOutline = [
+ 		new google.maps.LatLng(lowerbound,leftboundnosi),
+ 		new google.maps.LatLng(upperbound,leftboundnosi),
+ 		new google.maps.LatLng(upperbound,rightbound),
+ 		new google.maps.LatLng(lowerbound,rightbound),
+ 		new google.maps.LatLng(lowerbound,leftboundnosi)
+    ]
+
+    var outline = new google.maps.Polyline({
+    	path:NewYorkOutline,
+    	geodesic:true,
+    	strokeColor: '#0000FF',
+    	strokeOpacity: 1.0,
+    	strokeWeight:2
+    })
+
+    outline.setMap(map);
+
 }
 google.maps.event.addDomListener(window, 'load', initialize);
