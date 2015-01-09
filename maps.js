@@ -1,5 +1,5 @@
 
-
+//http://jsfiddle.net/DV9Bw/1/
 var maxdist = 3000 ;
 function removemax(){
     maxdist = 90999090090909;
@@ -121,3 +121,26 @@ function initialize() {
     
 }
 google.maps.event.addDomListener(window, 'load', initialize);
+
+function findPos(obj) {
+    var curleft = 0, curtop = 0;
+    if (obj.offsetParent) {
+        do {
+            curleft += obj.offsetLeft;
+            curtop += obj.offsetTop;
+        } while (obj = obj.offsetParent);
+        return { x: curleft, y: curtop };
+    }
+    return undefined;
+}
+$('#map-canvas').mousemove(function(e) {
+    var pos = findPos(this);
+    var x = e.pageX - pos.x;
+    var y = e.pageY - pos.y;
+    var coord = "x=" + x + ", y=" + y;
+    var c = this.getContext('2d');
+    var p = c.getImageData(x, y, 1, 1).data;
+    //var hex = "#" + ("000000" + rgbToHex(p[0], p[1], p[2])).slice(-6);
+    //$('#status').html(coord + "<br>" + hex);
+});
+
