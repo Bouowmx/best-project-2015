@@ -27,7 +27,7 @@ function initialize() {
     var upperbound = 40.89275342420696;
     var leftboundnosi = -74.0423583984375;
     
-    var map = new google.maps.Map(document.getElementById('map-canvas'), {center: {lat: 40.7819, lng: -73.8883}, zoom: 8});
+    var map = new google.maps.Map(document.getElementById('map-canvas'), {center: {lat: 40.7819, lng: -73.8883}, zoom: 11});
 
 
     ///////////////////////////////////
