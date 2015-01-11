@@ -87,7 +87,7 @@ function roomCreate(event) {
 }
 
 function roomJoin(event) {
-	console.log("Join room " + (elements.indexOf(event.currentTarget) - 7) / 4);
+	console.log("Join room " + (elements.indexOf(event.currentTarget) - 10) / 4);
 }
 
 function rooms() {
