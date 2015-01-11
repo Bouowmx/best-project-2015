@@ -6,8 +6,8 @@ def application(env, start_response):
 		uwsgi.cache_update("names", "\x1f")
 	while (True):
 		msg = uwsgi.websocket_recv()
-		msg_type = msg.split("\x1f")[0]
-		msg_data = msg.split("\x1f")[1]
+		msg_type = msg.split("\x1c")[0]
+		msg_data = msg.split("\x1c")[1]
 		print '''Message: "''' + msg + '''"''' + "; " + '''Message Type: "''' + msg_type + '''"''' + "; " + '''Message Data: "''' + msg_data + '''"'''
 		if (msg_type == "close"):
 			names = uwsgi.cache_get("names").split("\x1f")

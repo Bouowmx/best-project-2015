@@ -3,7 +3,7 @@ var elementEventListeners = [];
 var name = "";
 var state = "";
 var websocket = new WebSocket("ws://bp2015.themafia.info:9090");
-window.onbeforeunload = function(event) {websocket.send("close\x1f" + name);};
+window.onbeforeunload = function(event) {websocket.send("close\x1c" + name);};
 websocket.onclose = function(event) {console.log("WebSocket connection closed: " + event.code);};
 websocket.onerror = function(event) {console.log("WebSocket error occurred.");};
 websocket.onmessage = function(event) {
@@ -47,9 +47,9 @@ function login() {
 	stateChange();
 	createElementAppendTextNode(0, "h1", "Welcome to Best Project 2015");
 	createElementAppendTextNode(1, "div", "Enter the name you will use:");
-	createElementAddEventListener(2, "input", "keypress", function(event) {if (event.which == 13) {websocket.send("name\x1f" + elements[2].value);}});
+	createElementAddEventListener(2, "input", "keypress", function(event) {if (event.which == 13) {websocket.send("name\x1c" + elements[2].value);}});
 	createElementAppendTextNode(3, "span", " ");
-	createElementAddEventListener(4, "input", "click", function(event) {websocket.send("name\x1f" + elements[2].value);});
+	createElementAddEventListener(4, "input", "click", function(event) {websocket.send("name\x1c" + elements[2].value);});
 	elements[4].setAttribute("type", "submit");
 	documentBodyAppendElements();
 	elements[2].focus()
