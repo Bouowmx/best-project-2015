@@ -7,6 +7,20 @@ Sean Yip
 Steven Zabolotny
 
 Richard Zhan
+#Instructions
+Do not go to website `bp2015.themafia.info`. You will not see anything useful.
+
+`maps.html` is a demonstration of how a player moves in-game.
+`bp2015.*` is a demonstration of how a player connects to the game. Note: you cannot see maps in `bp2015.html`.
+
+Running `bp2015.*` requires `uwsgi`. Install in Debian-based systems using `sudo apt-get install uwsgi`.
+
+Change to project directory.
+
+To start server: `./bp2015.sh`
+
+To play, open `bp2015.html`.
+
 #To-do
 ###Map
 * Interactive Google Maps
