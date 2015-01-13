@@ -7,6 +7,7 @@ function removemax(){
 function readdmax(){
     maxdist = 3000;
 }
+
 function circleDrawer(m,c,r){
     return {strokeColor:"FF0000",
             strokeOpacity: 0.6,
@@ -20,14 +21,26 @@ function circleDrawer(m,c,r){
 }
 function initialize() {
 
-    var lowerbound = 40.56898024667195;
+    var lowerbound = 40.53898024667195;
     var leftbound = -74.26071166992188;
-    var rightbound = -73.75211975097656;
+    var rightbound = -73.71081975097656;
     var upperbound = 40.89275342420696;
     var leftboundnosi = -74.0423583984375;
     
-    var map = new google.maps.Map(document.getElementById('map-canvas'), {center: {lat: 40.7819, lng: -73.8883}, zoom: 13});
-    var marker_0 = new google.maps.Marker({position: new google.maps.LatLng(40.7819, -73.8883), map: map, title: "Player"});
+    var map = new google.maps.Map(document.getElementById('map-canvas'), {center: {lat: 40.7819, lng: -73.8883}, zoom: 10});
+
+
+    ///////////////////////////////////
+    //THIS MAKES A RANDOM SPAWN POINT//
+    ///////////////////////////////////
+    var randlat = ((Math.random()*((upperbound - lowerbound)*100000000000000))/100000000000000)+lowerbound
+    var randlng = ((Math.random()*((rightbound - leftboundnosi)*100000000000000))/100000000000000)+leftboundnosi
+    var marker_0 = new google.maps.Marker({position: new google.maps.LatLng(randlat, randlng),map: map, title: "player"});
+    /////////////////////////////
+    //END OF RANDOM SPAWN POINT//
+    /////////////////////////////
+
+
     var directionsService = new google.maps.DirectionsService();
     var directionsDisplay = new google.maps.DirectionsRenderer();
     directionsDisplay.setOptions({preserveViewport:true,
@@ -46,14 +59,16 @@ function initialize() {
     players[0].circle = new google.maps.Circle(circleDrawer(map,players[0].marker.position,4000));
     
 
-    //NOT IN USE, WAS USEFUL; NO LONGER USEFUL
-    //Keeping it for a while though. Might be useful
     var getDistance = function(x,y){
 	//console.log(Math.sqrt(Math.pow(x.lat() - y.lat(),2) + Math.pow(x.lng() - y.lng(),2)));
 	return Math.sqrt(Math.pow(x.lat() - y.lat(),2) + Math.pow(x.lng() - y.lng(),2));
     }
 
 
+
+    /////////////////////
+    //MOVING THE PLAYER//
+    /////////////////////
     var curdist = 0;
     var remdist = maxdist; // This is how much the player has left to move in the current turn.
     google.maps.event.addListener(players[0].circle, "mousemove", function(e){
@@ -69,9 +84,8 @@ function initialize() {
 	    
 	});
 	
-    });
+    });    
     google.maps.event.addListener(players[0].circle, "rightclick", function(e) {
-
 	lat = e.latLng.lat();
 	lng = e.latLng.lng();
 	
@@ -92,6 +106,9 @@ function initialize() {
 	
 	
     });
+    ////////////////////////
+    //END OF MOVING PLAYER//
+    ////////////////////////
 
     var NewYorkOutline = [
  	new google.maps.LatLng(lowerbound,leftboundnosi),
