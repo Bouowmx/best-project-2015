@@ -15,12 +15,32 @@ function circleDrawer(m,c,r){
             map: m,
             center: c,
             radius: r,
-	    clickable: true
+	    clickable: false
 	   };
 }
 
+function findPos(obj) {
+    var curleft = 0, curtop = 0;
+    if (obj.offsetParent) {
+        do {
+	    curleft += obj.offsetLeft;
+	    curtop += obj.offsetTop;
+        } while (obj = obj.offsetParent);
+        return { x: curleft, y: curtop };
+    }
+    return undefined;
+}
 function initialize() {
+    var canvas = document.getElementById("map");
+    var context = canvas.getContext('2d');
     
+    var imageObj = new Image();
+    imageObj.onload = function(){
+	context.drawImage(imageObj,0,0);
+    };
+    imageObj.src ="https://maps.googleapis.com/maps/api/staticmap?center=40.7772917298741,-73.89129638671875&zoom=13&size=600x600&key=AIzaSyAYeVRIphkYn8LRtRn-i2rQo2lzdTVb7DE";
+    
+
     var lowerbound = 40.56898024667195;
     var leftbound = -74.26071166992188;
     var rightbound = -73.75211975097656;
@@ -57,7 +77,7 @@ function initialize() {
 
     var curdist = 0;
     var remdist = maxdist; // This is how much the player has left to move in the current turn.
-    google.maps.event.addListener(players[0].circle, "mousemove", function(e){
+    google.maps.event.addListener(map, "mousemove", function(e){
 	players[0].path.origin = players[0].marker.position;
 	players[0].path.destination = e.latLng;
 	directionsService.route(players[0].path,function(result, status){
@@ -71,10 +91,27 @@ function initialize() {
 	});
 	
     });
-    google.maps.event.addListener(players[0].circle, "rightclick", function(e) {
+    google.maps.event.addListener(map, "rightclick", function(e) {
+
+	
 
 	lat = e.latLng.lat();
 	lng = e.latLng.lng();
+	imageObj.src ="https://maps.googleapis.com/maps/api/staticmap?center="+lat+","+lng+"&zoom=13&size=600x600&key=AIzaSyAYeVRIphkYn8LRtRn-i2rQo2lzdTVb7DE";
+
+
+
+	var pos = findPos($("#map"));
+	console.log($("#map"));
+	var x = 300;
+	var y = 300;
+	var c = $("#map")[0].getContext('2d');
+	var p = c.getImageData(x, y, 1, 1).data;
+	console.log(""+p[0]+","+p[1]+","+p[2]);
+
+
+	
+
 	
 	if (upperbound>lat && lowerbound<lat && leftboundnosi<lng && rightbound>lng){
 	    if (curdist <= remdist) {
@@ -113,31 +150,7 @@ function initialize() {
     outline.setMap(map);
 
 
-    function findPos(obj) {
-	var curleft = 0, curtop = 0;
-	if (obj.offsetParent) {
-            do {
-		curleft += obj.offsetLeft;
-		curtop += obj.offsetTop;
-            } while (obj = obj.offsetParent);
-	    console.log("I GAVE THE LEGIT VARIABLE");
-            return { x: curleft, y: curtop };
-	}
-	console.log("I am not working");
-	return undefined;
-    }
-    $('#map-canvas').mousedown(function(e) {
-	console.log("jesus");
-	if (e.button==2){
-	    console.log(this);
-	    var pos = findPos(this);
-	    var x = e.pageX - pos.x;
-	    var y = e.pageY - pos.y;
-	    var c = this.getContext('2d');
-	    var p = c.getImageData(x, y, 1, 1).data;
-	    console.log(""+p[0]+","+p[1]+","+p[2]);
-	}
-    });
+    
 
     document.getElementsByName("turn")[0].addEventListener("click", function() {
 	remdist = maxdist;
