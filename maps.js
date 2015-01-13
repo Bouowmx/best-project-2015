@@ -129,7 +129,7 @@ function initialize() {
     $('#map-canvas').mousedown(function(e) {
 	console.log("jesus");
 	if (e.button==2){
-	    console.log("I WORK\n");
+	    console.log(this);
 	    var pos = findPos(this);
 	    var x = e.pageX - pos.x;
 	    var y = e.pageY - pos.y;
