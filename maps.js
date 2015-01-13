@@ -15,12 +15,20 @@ function circleDrawer(m,c,r){
             map: m,
             center: c,
             radius: r,
-	    clickable: true
+	    clickable: false
 	   };
 }
 
 function initialize() {
+    var canvas = document.getElementById("map");
+    var context = canvas.getContext('2d');
     
+    var imageObj = new Image();
+    imageObj.onload = function(){
+	context.drawImage(imageObj,0,0);
+    };
+    imageObj.src ="https://maps.googleapis.com/maps/api/staticmap?center=40.7772917298741,-73.89129638671875&zoom=13&size=600x400&key=AIzaSyAYeVRIphkYn8LRtRn-i2rQo2lzdTVb7DE";
+
     var lowerbound = 40.56898024667195;
     var leftbound = -74.26071166992188;
     var rightbound = -73.75211975097656;
@@ -57,7 +65,7 @@ function initialize() {
 
     var curdist = 0;
     var remdist = maxdist; // This is how much the player has left to move in the current turn.
-    google.maps.event.addListener(players[0].circle, "mousemove", function(e){
+    google.maps.event.addListener(map, "mousemove", function(e){
 	players[0].path.origin = players[0].marker.position;
 	players[0].path.destination = e.latLng;
 	directionsService.route(players[0].path,function(result, status){
@@ -71,7 +79,9 @@ function initialize() {
 	});
 	
     });
-    google.maps.event.addListener(players[0].circle, "rightclick", function(e) {
+    google.maps.event.addListener(map, "rightclick", function(e) {
+
+	imageObj.src ="https://maps.googleapis.com/maps/api/staticmap?center="+e.latLng.lat()+","+e.latLng.lng()+"&zoom=13&size=600x300&key=AIzaSyAYeVRIphkYn8LRtRn-i2rQo2lzdTVb7DE";
 
 	lat = e.latLng.lat();
 	lng = e.latLng.lng();
@@ -126,10 +136,10 @@ function initialize() {
 	console.log("I am not working");
 	return undefined;
     }
-    $('#map-canvas').mousedown(function(e) {
+    $('#map').mousedown(function(e) {
 	console.log("jesus");
 	if (e.button==2){
-	    console.log("I WORK\n");
+	    console.log("I WORK");
 	    var pos = findPos(this);
 	    var x = e.pageX - pos.x;
 	    var y = e.pageY - pos.y;
