@@ -28,7 +28,7 @@ function appendRow(row, data) {row.appendChild(data);}
 
 function login() {
 	state = "login";
-	removeChildren();
+	/*removeChildren();
 	elements[0] = document.createElement("h1");
 	elementTextNodes[0] = document.createTextNode("Welcome to Best Project 2015");
 	elements[0].appendChild(elementTextNodes[0]);
@@ -41,7 +41,11 @@ function login() {
 	elements[3].addEventListener("click", function(event) {
 		websocket.send("name;" + elements[2].value);
 	});
-	appendChildren();
+	appendChildren();*/
+    document.getElementById("submit").addEventListener("click", function(event) {
+	websocket.send("name;" + elements[2].value);
+    });
+
 }
 
 function removeChildren() {

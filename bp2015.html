@@ -7,8 +7,51 @@
 	* {font-family: Verdana, sans-serif}
 	table, td, th {border: solid black 1px}
 	table {border-collapse: collapse}
+
+	#instructions {
+	position: relative;
+	z-index: 3;
+	padding: 10px;
+	background-color: #87CEFA;
+	}
+	
+	.container {  position: relative; }
+	.container:before {
+	content: "";
+	position: absolute;
+	height: 100%;
+	width: 100%;
+	z-index: 1;
+	background-image: url("static/bg.png");
+	opacity: 0.5;
+	background-repeat: no-repeat;
+	}
+	.content {
+	position: relative;
+	z-index: 2;
+	}​
 </style>
 <title>BP2015</title>
 <body>
+  <div class="container">
+    <div class="content">
+      <h1>Welcome to Best Project 2015</h1>
+      <p>Enter the name you will use:</p>
+      <input type="text">
+      <input id="submit" type="submit">
+      <p id="instructions">Instructions: <br>
+	1. Enter a username and hit submit.
+	2. Join a room with other players or create a room and wait for the match to begin! <br>
+	3. In game, you are set as either a killer, a cop, or an innocent. <br>
+	&nbsp;&nbsp;&nbsp;&nbsp;a. As a killer, your objective is to kill all the innocent players without them determining who you are. <br>
+	&nbsp;&nbsp;&nbsp;&nbsp;b. As a cop, your objective is to determine through investigation and cooperation who the killer is and arrest him. <br>
+	&nbsp;&nbsp;&nbsp;&nbsp;c. As an innocent, your objective is to communicate with the other still-living innocent players and the cop (whose identity is unknown) to arrest all the killers. You may vote to kill one player every turn. <br>
+	4. You can move 3000 meters each turn. Movement is based on the streets you walk to get to places. Cops can also choose to arrest a target player. <br>
+	5. Hit end turn. This will refresh your movement and change the time from day to night or viceversa. (At night, your visibility is greatly reduced). <br>
+	6. The game ends when either all killers are arrested or dead or all innocents and all cops are dead. <br>
+      </p>
+      <br><br><br><br><br><br><br><br><br><br><br><br>
+    </div>
+  </div>
 </body>
 </html>
