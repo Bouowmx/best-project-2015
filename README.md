@@ -15,11 +15,7 @@ Do not go to website `bp2015.themafia.info`. You will not see anything useful.
 
 Running `bp2015.*` requires `uwsgi`. Install in Debian-based systems using `sudo apt-get install uwsgi`. In `bp2015.js`, change `ws://bp2015.themafia.info:9090` to `ws://<your server domain or server IP address>:9090` since you cannot log in to `bp2015.themafia.info` to start the server.
 
-Change to project directory.
-
-To start server: `./bp2015.sh`
-
-To play, open `bp2015.html`.
+To start server, change to project direactory and run `./bp2015.sh`
 
 #To-do
 ###Map
