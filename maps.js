@@ -77,6 +77,7 @@ function initialize() {
     }
 
 
+
     var curdist = 0;
     var remdist = maxdist; // This is how much the player has left to move in the current turn.
     google.maps.event.addListener(map, "mousemove", function(e){
@@ -95,7 +96,6 @@ function initialize() {
     });
     google.maps.event.addListener(map, "rightclick", function(e) {
 
-	
 
 	lat = e.latLng.lat();
 	lng = e.latLng.lng();
@@ -106,34 +106,35 @@ function initialize() {
 	
 	if (upperbound>lat && lowerbound<lat && leftboundnosi<lng && rightbound>lng){
 	    if (curdist <= remdist) {
-		placeholder = imageObj.src;
+		
 		imageObj.src ="https://maps.googleapis.com/maps/api/staticmap?center="+lat+","+lng+"&zoom=32&size=600x600&key=AIzaSyAYeVRIphkYn8LRtRn-i2rQo2lzdTVb7DE&style=feature:water|color:0xABCBFD";
-		var pos = findPos($("#map"));
-		var x = 300;
-		var y = 300;
-		var c = $("#map")[0].getContext('2d');
-		var p = c.getImageData(x, y, 1, 1).data;
-		if(!((p[0]>169&&p[0]<175)||(p[1]>199&&p[1]<215)||(p[2]>249&&p[2]<254))){
-		    remdist = remdist - curdist;
-		    document.getElementById("remdist").innerHTML = "Remaining Distance: " + remdist; // Update the remaining distance
-		    console.log(e.latLng.lat() + "," + e.latLng.lng());
-		    players[0].marker.position = new google.maps.LatLng(lat,lng);
-		    players[0].circle.setCenter(new google.maps.LatLng(lat,lng));
-		    players[0].marker.setMap(map); //setMap will render the marker.
-		    players[0].circle.setMap(map);
-		    console.log("I Work "+p[0]+","+p[1]+","+p[2]);
-		}
-		else{
-		    console.log("I don't work "+p[0]+","+p[1]+","+p[2]);
-		    imageObj.src=placeholder;
-		    window.alert("AYO YOU CAN'T SWIM");
-		}
+		$(imageObj).load(function() {
+		    var pos = findPos($("#map"));
+		    var x = 300;
+		    var y = 300;
+		    var c = $("#map")[0].getContext('2d');
+		    var p = c.getImageData(x, y, 1, 1).data;
+		    if (!(p[0] > 169 && p[0] < 175 && p[1] > 199 && p[1] < 215 && p[2] > 249)){//p[0]>169&&p[0]<175)||(p[1]>199&&p[1]<215)||(p[2]>249&&p[2]<254))){
+			remdist = remdist - curdist;
+			document.getElementById("remdist").innerHTML = "Remaining Distance: " + remdist; // Update the remaining distance			
+			players[0].marker.position = new google.maps.LatLng(lat,lng);
+			players[0].circle.setCenter(new google.maps.LatLng(lat,lng));
+			players[0].marker.setMap(map); //setMap will render the marker.
+			players[0].circle.setMap(map);
+			console.log("I Work "+p[0]+","+p[1]+","+p[2]);
+		    }
+		    else{
+			console.log("I don't work "+p[0]+","+p[1]+","+p[2]);
+			window.alert("AYO YOU CAN'T SWIM");
+		    }
+		
+		});  
 	    }
-	}else{
-	    window.alert("YOU'RE OUTSIDE NEW YORK")
 	}
 	
-	
+	else{
+	    window.alert("YOU'RE OUTSIDE NEW YORK")
+	}
     });
 
     var NewYorkOutline = [
