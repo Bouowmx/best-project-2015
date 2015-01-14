@@ -16,6 +16,9 @@ websocket.onmessage = function(event) {
 		name = event.data;
 		if (name == "true") {
 			name = elements[2].value;
+			document.getElementById("name").removeEventListener(elementEventListeners[0]);
+			document.getElementById("submit").removeEventListener(elementEventListeners[1]);
+			elementEventListeners = [];
 			rooms();
 		} else {alert("Name already in use.");}
 	}
@@ -86,15 +89,24 @@ function elementsRemoveEventListeners() {for (var i = 0; i < elements.length; i+
 
 function login() {
 	state = "login";
-	stateChange();
-	createElementAppendTextNode(0, "h1", "Welcome to Best Project 2015");
-	createElementAppendTextNode(1, "div", "Enter the name you will use:");
-	createElementAddEventListener(2, "input", "keypress", function(event) {if (event.which == 13) {websocket.send("name\x1c" + elements[2].value);}});
-	createElementAppendTextNode(3, "span", " ");
-	createElementAddEventListener(4, "input", "click", function(event) {websocket.send("name\x1c" + elements[2].value);});
-	elements[4].setAttribute("type", "submit");
-	documentBodyAppendElements();
-	elements[2].focus();
+	/*removeChildren();
+	elements[0] = document.createElement("h1");
+	elementTextNodes[0] = document.createTextNode("Welcome to Best Project 2015");
+	elements[0].appendChild(elementTextNodes[0]);
+	elements[1] = document.createElement("div");
+	elementTextNodes[1] = document.createTextNode("Enter the name you will use:");
+	elements[1].appendChild(elementTextNodes[1]);
+	elements[2] = document.createElement("input");
+	elements[3] = document.createElement("input");
+	elements[3].setAttribute("type", "submit");
+	elements[3].addEventListener("click", function(event) {
+		websocket.send("name;" + elements[2].value);
+	});
+	appendChildren();*/
+	elementEventListeners[0] = function(event) {if (event.which == 13) {websocket.send("name\x1c" + document.getElementById("name").value);}};
+	elementEventListeners[1] = function(event) {websocket.send("name\x1c" + document.getElementById("name").value);};
+	document.getElementById("name").addEventListener("keypress", elementEventListeners[0]);
+	document.getElementById("submit").addEventListener("click", elementEventListeners[1]);
 }
 
 function removeChild(parent, child) {elements[parent].removeChild(elements[child]);}
