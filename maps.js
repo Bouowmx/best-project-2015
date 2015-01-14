@@ -38,6 +38,7 @@ function initialize() {
     imageObj.onload = function(){
 	context.drawImage(imageObj,0,0);
     };
+    imageObj.crossOrigin='http://maps.googleapis.com/crossdomain.xml';
     imageObj.src ="https://maps.googleapis.com/maps/api/staticmap?center=40.7772917298741,-73.89129638671875&zoom=13&size=600x600&key=AIzaSyAYeVRIphkYn8LRtRn-i2rQo2lzdTVb7DE";
     
 
@@ -124,7 +125,6 @@ function initialize() {
 		players[0].circle.setMap(map);
 	    }
 	}else{
-	    console.log("OUTSIDE");
 	    window.alert("YOU'RE OUTSIDE NEW YORK")
 	}
 	
