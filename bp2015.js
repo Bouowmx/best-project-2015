@@ -94,6 +94,7 @@ function login() {
 	elementEventListeners[1] = function(event) {websocket.send("name\x1c" + document.getElementById("name").value);};
 	document.getElementById("name").addEventListener("keypress", elementEventListeners[0]);
 	document.getElementById("submit").addEventListener("click", elementEventListeners[1]);
+	document.getElementById("name").focus()
 }
 
 function removeChild(parent, child) {elements[parent].removeChild(elements[child]);}
