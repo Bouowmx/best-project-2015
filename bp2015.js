@@ -89,20 +89,6 @@ function elementsRemoveEventListeners() {for (var i = 0; i < elements.length; i+
 
 function login() {
 	state = "login";
-	/*removeChildren();
-	elements[0] = document.createElement("h1");
-	elementTextNodes[0] = document.createTextNode("Welcome to Best Project 2015");
-	elements[0].appendChild(elementTextNodes[0]);
-	elements[1] = document.createElement("div");
-	elementTextNodes[1] = document.createTextNode("Enter the name you will use:");
-	elements[1].appendChild(elementTextNodes[1]);
-	elements[2] = document.createElement("input");
-	elements[3] = document.createElement("input");
-	elements[3].setAttribute("type", "submit");
-	elements[3].addEventListener("click", function(event) {
-		websocket.send("name;" + elements[2].value);
-	});
-	appendChildren();*/
 	elementEventListeners[0] = function(event) {if (event.which == 13) {websocket.send("name\x1c" + document.getElementById("name").value);}};
 	elementEventListeners[1] = function(event) {websocket.send("name\x1c" + document.getElementById("name").value);};
 	document.getElementById("name").addEventListener("keypress", elementEventListeners[0]);
