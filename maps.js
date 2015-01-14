@@ -31,6 +31,7 @@ function findPos(obj) {
     return undefined;
 }
 function initialize() {
+    removemax();
     var canvas = document.getElementById("map");
     var context = canvas.getContext('2d');
     
@@ -98,31 +99,33 @@ function initialize() {
 
 	lat = e.latLng.lat();
 	lng = e.latLng.lng();
-	imageObj.src ="https://maps.googleapis.com/maps/api/staticmap?center="+lat+","+lng+"&zoom=13&size=600x600&key=AIzaSyAYeVRIphkYn8LRtRn-i2rQo2lzdTVb7DE&style=feature:water|color:0xABCBFD";
-
-
-
-	var pos = findPos($("#map"));
-	console.log($("#map"));
-	var x = 300;
-	var y = 300;
-	var c = $("#map")[0].getContext('2d');
-	var p = c.getImageData(x, y, 1, 1).data;
-	console.log(""+p[0]+","+p[1]+","+p[2]);
-
-
+	
+	//WATER IS 171,213,253
 	
 
 	
 	if (upperbound>lat && lowerbound<lat && leftboundnosi<lng && rightbound>lng){
 	    if (curdist <= remdist) {
-		remdist = remdist - curdist;
-		document.getElementById("remdist").innerHTML = "Remaining Distance: " + remdist; // Update the remaining distance
-		console.log(e.latLng.lat() + "," + e.latLng.lng());
-		players[0].marker.position = new google.maps.LatLng(lat,lng);
-		players[0].circle.setCenter(new google.maps.LatLng(lat,lng));
-		players[0].marker.setMap(map); //setMap will render the marker.
-		players[0].circle.setMap(map);
+		imageObj.src ="https://maps.googleapis.com/maps/api/staticmap?center="+lat+","+lng+"&zoom=32&size=600x600&key=AIzaSyAYeVRIphkYn8LRtRn-i2rQo2lzdTVb7DE&style=feature:water|color:0xABCBFD";
+		var pos = findPos($("#map"));
+		console.log($("#map"));
+		var x = 300;
+		var y = 300;
+		var c = $("#map")[0].getContext('2d');
+		var p = c.getImageData(x, y, 1, 1).data;
+		console.log(""+p[0]+","+p[1]+","+p[2]);
+		if(!((p[0]>169&&p[0]<175)||(p[1]>199&&p[1]<205)||(p[2]>249&&p[2]<254))){
+		    remdist = remdist - curdist;
+		    document.getElementById("remdist").innerHTML = "Remaining Distance: " + remdist; // Update the remaining distance
+		    console.log(e.latLng.lat() + "," + e.latLng.lng());
+		    players[0].marker.position = new google.maps.LatLng(lat,lng);
+		    players[0].circle.setCenter(new google.maps.LatLng(lat,lng));
+		    players[0].marker.setMap(map); //setMap will render the marker.
+		    players[0].circle.setMap(map);
+		}
+		else{
+		    window.alert("AYO YOU CAN'T SWIM");
+		}
 	    }
 	}else{
 	    window.alert("YOU'RE OUTSIDE NEW YORK")
