@@ -15,10 +15,11 @@ websocket.onmessage = function(event) {
 	if (state == "login") {
 		name = event.data;
 		if (name == "true") {
-			name = elements[2].value;
+			name = document.getElementById("name").value;
 			document.getElementById("name").removeEventListener(elementEventListeners[0]);
 			document.getElementById("submit").removeEventListener(elementEventListeners[1]);
 			elementEventListeners = [];
+			while (document.body.firstChild) {document.body.removeChild(document.body.firstChild);}
 			rooms();
 		} else {alert("Name already in use.");}
 	}
