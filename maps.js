@@ -40,7 +40,7 @@ function initialize() {
 	context.drawImage(imageObj,0,0);
     };
     imageObj.crossOrigin='http://maps.googleapis.com/crossdomain.xml';
-    imageObj.src ="https://maps.googleapis.com/maps/api/staticmap?center=40.7772917298741,-73.89129638671875&zoom=13&size=600x600&key=AIzaSyAYeVRIphkYn8LRtRn-i2rQo2lzdTVb7DE&style=feature:water|color:0xABCBFD";
+    imageObj.src ="https://maps.googleapis.com/maps/api/staticmap?center=40.6772917298741,-73.89129638671875&zoom=13&size=600x600&key=AIzaSyAYeVRIphkYn8LRtRn-i2rQo2lzdTVb7DE&style=feature:water|color:0xABCBFD";
     
 
     var lowerbound = 40.56898024667195;
@@ -106,15 +106,14 @@ function initialize() {
 	
 	if (upperbound>lat && lowerbound<lat && leftboundnosi<lng && rightbound>lng){
 	    if (curdist <= remdist) {
+		placeholder = imageObj.src;
 		imageObj.src ="https://maps.googleapis.com/maps/api/staticmap?center="+lat+","+lng+"&zoom=32&size=600x600&key=AIzaSyAYeVRIphkYn8LRtRn-i2rQo2lzdTVb7DE&style=feature:water|color:0xABCBFD";
 		var pos = findPos($("#map"));
-		console.log($("#map"));
 		var x = 300;
 		var y = 300;
 		var c = $("#map")[0].getContext('2d');
 		var p = c.getImageData(x, y, 1, 1).data;
-		console.log(""+p[0]+","+p[1]+","+p[2]);
-		if(!((p[0]>169&&p[0]<175)||(p[1]>199&&p[1]<205)||(p[2]>249&&p[2]<254))){
+		if(!((p[0]>169&&p[0]<175)||(p[1]>199&&p[1]<215)||(p[2]>249&&p[2]<254))){
 		    remdist = remdist - curdist;
 		    document.getElementById("remdist").innerHTML = "Remaining Distance: " + remdist; // Update the remaining distance
 		    console.log(e.latLng.lat() + "," + e.latLng.lng());
@@ -122,8 +121,11 @@ function initialize() {
 		    players[0].circle.setCenter(new google.maps.LatLng(lat,lng));
 		    players[0].marker.setMap(map); //setMap will render the marker.
 		    players[0].circle.setMap(map);
+		    console.log("I Work "+p[0]+","+p[1]+","+p[2]);
 		}
 		else{
+		    console.log("I don't work "+p[0]+","+p[1]+","+p[2]);
+		    imageObj.src=placeholder;
 		    window.alert("AYO YOU CAN'T SWIM");
 		}
 	    }
