@@ -1,7 +1,10 @@
 (function() {var elements = [];
 var elementEventListeners = [];
 var name = "";
-var roomsGetInterval = 0;
+var intervalRoomsGet = 0;
+var intervalWait = 0;
+var playersMax = 4;
+var roomNumber = -1;
 var state = "";
 var websocket = new WebSocket("ws://bp2015.themafia.info:9090");
 window.onbeforeunload = function(event) {websocket.send("close\x1c" + name);};
@@ -12,7 +15,11 @@ websocket.onmessage = function(event) {
 	if (state == "login") {
 		name = event.data;
 		if (name == "true") {
-			name = elements[2].value;
+			name = document.getElementById("name").value;
+			document.getElementById("name").removeEventListener(elementEventListeners[0]);
+			document.getElementById("submit").removeEventListener(elementEventListeners[1]);
+			elementEventListeners = [];
+			while (document.body.firstChild) {document.body.removeChild(document.body.firstChild);}
 			rooms();
 		} else {alert("Name already in use.");}
 	}
@@ -29,12 +36,12 @@ websocket.onmessage = function(event) {
 		for (var i = 0; i < rooms_.length; i++) {
 			console.log(rooms_[i]);
 			var index = 7 + 4 * i;
-			if (elements[index]) {elements[7 + 4 * i + 2].replaceChild(document.createTextNode((rooms_[i].split("\x1e").length - 1) + "/4"), elements[index + 2].firstChild);}
+			if (elements[index]) {elements[index + 2].replaceChild(document.createTextNode((rooms_[i].split("\x1e").length - 2) + "/" + playersMax), elements[index + 2].firstChild);}
 			else {
 				createElement(index, "tr");
-				createElementAppendTextNode(index + 1, "td", i);
+				createElementAppendTextNode(index + 1, "td", rooms_[i].split("\x1e")[0]);
 				appendChild(index, index + 1);
-				createElementAppendTextNode(index + 2, "td", (rooms_[i].split("\x1e").length - 1) + "/4");
+				createElementAppendTextNode(index + 2, "td", (rooms_[i].split("\x1e").length - 2) + "/" + playersMax);
 				appendChild(index, index + 2);
 				createElementAddEventListener(index + 3, "input", "click", roomJoin);
 				elements[index + 3].setAttribute("type", "button");
@@ -43,6 +50,19 @@ websocket.onmessage = function(event) {
 				appendChild(2, index);
 			}
 		}
+		for (var i = 7 + 4 * rooms_.length; i < elements.length; i += 4) {removeChild(2, i);}
+		elements.splice(7 + 4 * rooms_.length, elements.length - (7 + 4 * rooms_.length));
+	}
+	if (state == "wait") {
+		var room = event.data;
+		if (room == "ready") {
+			//Go to game: maps.js
+		}
+		if (roomNumber == -1) {roomNumber = parseInt(room);} //Convert to integer
+		else {
+			room = room.split("\x1e");
+			for (var i = 0; i < playersMax; i++) {elements[2 + i].replaceChild(document.createTextNode("Player " + (i + 1) + ": " + room[2 + i].split("\x1f")[0]), elements[2 + i].firstChild);}
+		}
 	}
 };
 websocket.onopen = function(event) {console.log("WebSocket connection opened.");};
@@ -50,7 +70,6 @@ websocket.onopen = function(event) {console.log("WebSocket connection opened.");
 function appendChild(parent, child) {elements[parent].appendChild(elements[child]);}
 
 function createElement(index, element) {elements[index] = document.createElement(element);}
-function createTextNode(index, text) {elementTextNodes[index] = document.createTextNode(text);}
 function createElementAddEventListener(index, element, event, eventListener) {
 	elements[index] = document.createElement(element);
 	elementEventListeners[index] = eventListener;
@@ -71,27 +90,29 @@ function elementsRemoveEventListeners() {for (var i = 0; i < elements.length; i+
 
 function login() {
 	state = "login";
-	/*removeChildren();
-	elements[0] = document.createElement("h1");
-	elementTextNodes[0] = document.createTextNode("Welcome to Best Project 2015");
-	elements[0].appendChild(elementTextNodes[0]);
-	elements[1] = document.createElement("div");
-	elementTextNodes[1] = document.createTextNode("Enter the name you will use:");
-	elements[1].appendChild(elementTextNodes[1]);
-	elements[2] = document.createElement("input");
-	elements[3] = document.createElement("input");
-	elements[3].setAttribute("type", "submit");
-	elements[3].addEventListener("click", function(event) {
-		websocket.send("name;" + elements[2].value);
-	});
-	appendChildren();*/
-    document.getElementById("submit").addEventListener("click", function(event) {
-	websocket.send("name;" + document.getElementById("name").value);
-    });
+	elementEventListeners[0] = function(event) {if (event.which == 13) {websocket.send("name\x1c" + document.getElementById("name").value);}};
+	elementEventListeners[1] = function(event) {websocket.send("name\x1c" + document.getElementById("name").value);};
+	document.getElementById("name").addEventListener("keypress", elementEventListeners[0]);
+	document.getElementById("submit").addEventListener("click", elementEventListeners[1]);
+	document.getElementById("name").focus()
 }
 
+function removeChild(parent, child) {elements[parent].removeChild(elements[child]);}
+
 function roomCreate(event) {
-	
+	state = "wait";
+	document.body.removeChild(elements[0]);
+	document.body.removeChild(elements[1]);
+	document.body.removeChild(elements[2]);
+	elements = [];
+	elementsRemoveEventListeners();
+	createElementAppendTextNode(0, "div", "Room " + roomNumber);
+	createElementAppendTextNode(1, "div", "Waiting for players...");
+	for (var i = 0; i < playersMax; i++) {createElementAppendTextNode(2 + i, "div", "Player " + (i + 1) + ":");}
+	documentBodyAppendElements();
+	websocket.send("roomCreate\x1c");
+	//while (roomNumber == -1) {}
+	//intervalWait = setInterval(function() {websocket.send("wait\x1c" + roomNumber + "\x1d" + name);}, 1000);
 }
 
 function roomJoin(event) {
