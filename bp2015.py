@@ -37,7 +37,6 @@ def application(env, start_response):
 					continue
 				roomNumbers.append(int(room[:room.index("\x1e")]))
 			roomNumber = 0
-			print roomNumbers
 			if (roomNumbers[0] != 0):
 				uwsgi.websocket_send(str(0))
 			else:
@@ -49,11 +48,36 @@ def application(env, start_response):
 						roomNumber = number
 			if (roomNumber == roomNumbers[len(roomNumbers) - 1]):
 				uwsgi.websocket_send(str(roomNumber + 1))
-			
+			roomNumber += 1
+			i = 0
+			while (i < len(rooms) - 1):
+				if (rooms[i] == ""):
+					continue
+				if (roomNumber > rooms[i][:rooms[i].index("\x1e")]):
+					rooms.insert(i, str(roomNumber) + "\x1e1\x1e\x1f\x1f\x1e\x1f\x1f\x1e\x1f\x1f\x1e\x1f\x1f")
+					break
+				i += 1
+			uwsgi.cache_update("rooms", "\x1e".join(rooms))
 		if (msg_type == "rooms"):
 			uwsgi.websocket_send(uwsgi.cache_get("rooms"))
 		if (msg_type == "wait"):
 			roomNumber = msg_data.split("\x1d")[0];
 			name = msg_data.split("\x1d")[1];
 			rooms = uwsgi.cache_get("rooms").split("\x1d")
-			#Find the room.
+			for room in rooms:
+				if (room == ""):
+					continue
+				if (roomNumber == room[:room.index("\x1e")]):
+					room = room.split("\x1e")
+					#0: number, 1: current player, 2: P1, 3: P2, 4: P3, 5: P4
+					i = 2
+					while (i < len(room)):
+						if (room[i] == "\x1f\x1f"):
+							room[i] = name + room[i]
+							break
+						i += 1
+					if (i == len(room) - 1):
+						websocket_send("ready")
+					room = "\x1e".join(room)
+					uwsgi.cache_update("rooms", room)
+					uwsgi.websocket_send(room)

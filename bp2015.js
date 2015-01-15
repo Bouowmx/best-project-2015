@@ -12,14 +12,20 @@ websocket.onclose = function(event) {console.log("WebSocket connection closed: "
 websocket.onerror = function(event) {console.log("WebSocket error occurred.");};
 websocket.onmessage = function(event) {
 	console.log("received: \"" + event.data + "\"");
-	if (state == "login") {
-		name = event.data;
-		if (name == "true") {
+	if (state == "join") {
+		if (event.data == "true") {
+			roomCreate();
+			//Hopefully this is it.
+		} else {
+			alert("Cannot join room.");
+			rooms();
+		}
+	} else if (state == "login") {
+		if (event.data == "true") {
 			name = document.getElementById("name").value;
 			rooms();
 		} else {alert("Name already in use.");}
-	}
-	else if (state == "rooms") {
+	} else if (state == "rooms") {
 		var rooms_ = event.data;
 		rooms_ = rooms_.split("\x1d");
 		for (var i = 0; i < rooms_.length; i++) {
@@ -30,7 +36,6 @@ websocket.onmessage = function(event) {
 			if (i == rooms_.length) {rooms_ = [];}
 		}
 		for (var i = 0; i < rooms_.length; i++) {
-			console.log(rooms_[i]);
 			var index = 7 + 4 * i;
 			if (elements[index]) {elements[index + 2].replaceChild(document.createTextNode((rooms_[i].split("\x1e").length - 2) + "/" + playersMax), elements[index + 2].firstChild);}
 			else {
@@ -48,19 +53,15 @@ websocket.onmessage = function(event) {
 		}
 		for (var i = 7 + 4 * rooms_.length; i < elements.length; i += 4) {removeChild(2, i);}
 		elements.splice(7 + 4 * rooms_.length, elements.length - (7 + 4 * rooms_.length));
-	}
-	else if (state == "wait") {
-		var room = event.data;
+	} else if (state == "wait") {
+		var room = event.data.split("\x1e");
+		console.log(room);
 		if (room == "ready") {
-			//Go to game: maps.js
+			clearInterval(intervalWait);
+			//Go to game
 		}
-		if (roomNumber == -1) {roomNumber = parseInt(room);}
-		else {
-			room = room.split("\x1e");
-			for (var i = 0; i < playersMax; i++) {elements[2 + i].replaceChild(document.createTextNode("Player " + (i + 1) + ": " + room[2 + i].split("\x1f")[0]), elements[2 + i].firstChild);}
-		}
-	}
-	else if (state == "waitRoomNumber") {
+		else {for (var i = 0; i < playersMax; i++) {elements[2 + i].replaceChild(document.createTextNode("Player " + (i + 1) + ": " + room[2 + i].split("\x1f")[0]), elements[2 + i].firstChild);}}
+	} else if (state == "waitRoomNumber") {
 		roomNumber = parseInt(event.data);
 		roomCreate();
 	}
@@ -102,18 +103,23 @@ function login() {
 
 function removeChild(parent, child) {elements[parent].removeChild(elements[child]);}
 
-function roomCreate(event) {
+function roomCreate() {
 	state = "wait";
 	stateChange();
 	createElementAppendTextNode(0, "div", "Room " + roomNumber);
 	createElementAppendTextNode(1, "div", "Waiting for players...");
 	for (var i = 0; i < playersMax; i++) {createElementAppendTextNode(2 + i, "div", "Player " + (i + 1) + ":");}
 	documentBodyAppendElements();
-	//intervalWait = setInterval(function() {websocket.send("wait\x1c" + roomNumber + "\x1d" + name);}, 1000);
+	websocket.send("wait\x1c" + roomNumber + "\x1d" + name);
+	intervalWait = setInterval(function() {websocket.send("wait\x1c" + roomNumber + "\x1d" + name)}, 1000);
 }
 
 function roomJoin(event) {
 	console.log("Join room " + elements[elements.indexOf(event.currentTarget) - 2].textContent);
+	clearInterval(intervalRoomsGet);
+	state = "join";
+	//stateChange();
+	websocket.send("join\x1c" + elements[elements.indexOf(event.currentTarget) - 2].textContent + "\x1d" + name);
 }
 
 function rooms() {
@@ -122,6 +128,7 @@ function rooms() {
 	createElementAppendTextNode(0, "div", "Welcome " + name);
 	createElementAddEventListener(1, "input", "click", function(event) {
 		state = "waitRoomNumber";
+		clearInterval(intervalRoomsGet);
 		stateChange();
 		websocket.send("roomCreate\x1c");
 	});
@@ -136,11 +143,9 @@ function rooms() {
 	createElementAppendTextNode(6, "th", "Join");
 	appendChild(3, 6);
 	appendChild(2, 3);
-	
-	//Only append the table to the document. Do not append tr or td.
 	documentBodyAppendElements([0, 1, 2]);
 	websocket.send("rooms\x1c");
-	//intervalRoomsGet = setInterval(function() {websocket.send("rooms\x1c")}, 1000);
+	intervalRoomsGet = setInterval(function() {websocket.send("rooms\x1c")}, 1000);
 }
 
 function stateChange() {
