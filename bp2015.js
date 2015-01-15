@@ -113,7 +113,7 @@ function roomCreate(event) {
 }
 
 function roomJoin(event) {
-	console.log("Join room " + elements[elements.indexOf(event.currentTarget) - 2].nodeValue);
+	console.log("Join room " + elements[elements.indexOf(event.currentTarget) - 2].textContent);
 }
 
 function rooms() {
@@ -140,6 +140,7 @@ function rooms() {
 	//Only append the table to the document. Do not append tr or td.
 	documentBodyAppendElements([0, 1, 2]);
 	websocket.send("rooms\x1c");
+	//intervalRoomsGet = setInterval(function() {websocket.send("rooms\x1c")}, 1000);
 }
 
 function stateChange() {
