@@ -114,18 +114,13 @@ function initialize() {
 		    var y = 300;
 		    var c = $("#map")[0].getContext('2d');
 		    var p = c.getImageData(x, y, 1, 1).data;
-		    if (!(p[0] > 169 && p[0] < 175 && p[1] > 199 && p[1] < 215 && p[2] > 249)){//p[0]>169&&p[0]<175)||(p[1]>199&&p[1]<215)||(p[2]>249&&p[2]<254))){
+		    if (!(p[0] > 169 && p[0] < 175 && p[1] > 199 && p[1] < 215 && p[2] > 249)){
 			remdist = remdist - curdist;
-			document.getElementById("remdist").innerHTML = "Remaining Distance: " + remdist; // Update the remaining distance			
+			document.getElementById("remdist").innerHTML = "Remaining Distance: " + remdist;			
 			players[0].marker.position = new google.maps.LatLng(lat,lng);
 			players[0].circle.setCenter(new google.maps.LatLng(lat,lng));
-			players[0].marker.setMap(map); //setMap will render the marker.
+			players[0].marker.setMap(map); 
 			players[0].circle.setMap(map);
-			console.log("I Work "+p[0]+","+p[1]+","+p[2]);
-		    }
-		    else{
-			console.log("I don't work "+p[0]+","+p[1]+","+p[2]);
-			window.alert("AYO YOU CAN'T SWIM");
 		    }
 		
 		});  
@@ -160,7 +155,7 @@ function initialize() {
 
     document.getElementsByName("turn")[0].addEventListener("click", function() {
 	remdist = maxdist;
-	document.getElementById("remdist").innerHTML = "Remaining Distance: " + remdist; // Update the remaining distance.
+	document.getElementById("remdist").innerHTML = "Remaining Distance: " + remdist;
     });
     
 }
