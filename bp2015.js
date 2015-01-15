@@ -16,14 +16,10 @@ websocket.onmessage = function(event) {
 		name = event.data;
 		if (name == "true") {
 			name = document.getElementById("name").value;
-			document.getElementById("name").removeEventListener(elementEventListeners[0]);
-			document.getElementById("submit").removeEventListener(elementEventListeners[1]);
-			elementEventListeners = [];
-			while (document.body.firstChild) {document.body.removeChild(document.body.firstChild);}
 			rooms();
 		} else {alert("Name already in use.");}
 	}
-	if (state == "rooms") {
+	else if (state == "rooms") {
 		var rooms_ = event.data;
 		rooms_ = rooms_.split("\x1d");
 		for (var i = 0; i < rooms_.length; i++) {
@@ -53,16 +49,20 @@ websocket.onmessage = function(event) {
 		for (var i = 7 + 4 * rooms_.length; i < elements.length; i += 4) {removeChild(2, i);}
 		elements.splice(7 + 4 * rooms_.length, elements.length - (7 + 4 * rooms_.length));
 	}
-	if (state == "wait") {
+	else if (state == "wait") {
 		var room = event.data;
 		if (room == "ready") {
 			//Go to game: maps.js
 		}
-		if (roomNumber == -1) {roomNumber = parseInt(room);} //Convert to integer
+		if (roomNumber == -1) {roomNumber = parseInt(room);}
 		else {
 			room = room.split("\x1e");
 			for (var i = 0; i < playersMax; i++) {elements[2 + i].replaceChild(document.createTextNode("Player " + (i + 1) + ": " + room[2 + i].split("\x1f")[0]), elements[2 + i].firstChild);}
 		}
+	}
+	else if (state == "waitRoomNumber") {
+		roomNumber = parseInt(event.data);
+		roomCreate();
 	}
 };
 websocket.onopen = function(event) {console.log("WebSocket connection opened.");};
@@ -80,9 +80,12 @@ function createElementAppendTextNode(index, element, text) {
 	elements[index].appendChild(document.createTextNode(text));
 }
 
-function documentBodyAppendElements() {for (var i = 0; i < elements.length; i++) {document.body.appendChild(elements[i]);}}
+function documentBodyAppendElements(indexes) {
+	if (indexes) {for (var i = 0; i < indexes.length; i++) {document.body.appendChild(elements[indexes[i]]);}}
+	else {for (var i = 0; i < elements.length; i++) {document.body.appendChild(elements[i]);}}
+}
 function documentBodyRemoveElements() {
-	for (var i = 0; i < elements.length; i++) {document.body.removeChild(elements[i]);}
+	while (document.body.firstChild) {document.body.removeChild(document.body.firstChild);}
 	elements = [];
 }
 
@@ -101,29 +104,27 @@ function removeChild(parent, child) {elements[parent].removeChild(elements[child
 
 function roomCreate(event) {
 	state = "wait";
-	document.body.removeChild(elements[0]);
-	document.body.removeChild(elements[1]);
-	document.body.removeChild(elements[2]);
-	elements = [];
-	elementsRemoveEventListeners();
+	stateChange();
 	createElementAppendTextNode(0, "div", "Room " + roomNumber);
 	createElementAppendTextNode(1, "div", "Waiting for players...");
 	for (var i = 0; i < playersMax; i++) {createElementAppendTextNode(2 + i, "div", "Player " + (i + 1) + ":");}
 	documentBodyAppendElements();
-	websocket.send("roomCreate\x1c");
-	//while (roomNumber == -1) {}
 	//intervalWait = setInterval(function() {websocket.send("wait\x1c" + roomNumber + "\x1d" + name);}, 1000);
 }
 
 function roomJoin(event) {
-	console.log("Join room " + (elements.indexOf(event.currentTarget) - 10) / 4);
+	console.log("Join room " + elements[elements.indexOf(event.currentTarget) - 2].nodeValue);
 }
 
 function rooms() {
 	state = "rooms";
 	stateChange();
 	createElementAppendTextNode(0, "div", "Welcome " + name);
-	createElementAddEventListener(1, "input", "click", roomCreate);
+	createElementAddEventListener(1, "input", "click", function(event) {
+		state = "waitRoomNumber";
+		stateChange();
+		websocket.send("roomCreate\x1c");
+	});
 	elements[1].setAttribute("type", "button");
 	elements[1].value = "Create Room";
 	createElement(2, "table");
@@ -137,13 +138,9 @@ function rooms() {
 	appendChild(2, 3);
 	
 	//Only append the table to the document. Do not append tr or td.
-	document.body.appendChild(elements[0]);
-	document.body.appendChild(elements[1]);
-	document.body.appendChild(elements[2]);
-	roomsGet();
+	documentBodyAppendElements([0, 1, 2]);
+	websocket.send("rooms\x1c");
 }
-
-function roomsGet() {websocket.send("rooms\x1c");}
 
 function stateChange() {
 	elementsRemoveEventListeners();

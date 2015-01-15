@@ -5,7 +5,7 @@ def application(env, start_response):
 	if (not uwsgi.cache_exists("names")):
 		uwsgi.cache_update("names", "\x1f")
 	if (not uwsgi.cache_exists("rooms")):
-		uwsgi.cache_update("rooms", "\x1d\x1d10\x1e1\x1e1\x1f1\x1e2\x1f2\x1e3\x1f3\x1e4\x1f4\x1d11\x1e3\x1e1\x1f1\x1e2\x1f2\x1e3\x1f3\x1e4\x1f4")
+		uwsgi.cache_update("rooms", "\x1d\x1d10\x1e1\x1eReimu\x1f1\x1f1\x1eMarisa\x1f2\x1f2\x1eRumia\x1f3\x1f3\x1eDaiyousei4\x1f4\x1d11\x1e3\x1eMeiling\x1f1\x1f1\x1eKoakuma\x1f2\x1f2\x1ePatchouli\x1f3\x1f3\x1eSakuya4\x1f4")
 	while (True):
 		msg = uwsgi.websocket_recv()
 		msg_type = msg.split("\x1c")[0]
@@ -37,12 +37,16 @@ def application(env, start_response):
 					continue
 				roomNumbers.append(int(room[:room.index("\x1e")]))
 			roomNumber = 0
-			for number in roomNumbers[1:]:
-				if (number - roomNumber >= 1):
-					uwsgi.websocket_send(str(roomNumber + 1))
-					break
-				else:
-					roomNumber = number
+			print roomNumbers
+			if (roomNumbers[0] != 0):
+				uwsgi.websocket_send(str(0))
+			else:
+				for number in roomNumbers[1:]:
+					if (number - roomNumber >= 1):
+						uwsgi.websocket_send(str(roomNumber + 1))
+						break
+					else:
+						roomNumber = number
 			if (roomNumber == roomNumbers[len(roomNumbers) - 1]):
 				uwsgi.websocket_send(str(roomNumber + 1))
 			
