@@ -32,6 +32,7 @@ function findPos(obj) {
     return undefined;
 }
 function initialize() {
+    removemax();
     var canvas = document.getElementById("map");
     var context = canvas.getContext('2d');
     
@@ -40,7 +41,7 @@ function initialize() {
 	context.drawImage(imageObj,0,0);
     };
     imageObj.crossOrigin='http://maps.googleapis.com/crossdomain.xml';
-    imageObj.src ="https://maps.googleapis.com/maps/api/staticmap?center=40.7772917298741,-73.89129638671875&zoom=13&size=600x600&key=AIzaSyAYeVRIphkYn8LRtRn-i2rQo2lzdTVb7DE&style=feature:water|color:0xABCBFD";
+    imageObj.src ="https://maps.googleapis.com/maps/api/staticmap?center=40.6772917298741,-73.89129638671875&zoom=13&size=600x600&key=AIzaSyAYeVRIphkYn8LRtRn-i2rQo2lzdTVb7DE&style=feature:water|color:0xABCBFD";
     
 
     var lowerbound = 40.53898024667195;
@@ -111,37 +112,37 @@ function initialize() {
 
 	lat = e.latLng.lat();
 	lng = e.latLng.lng();
-	imageObj.src ="https://maps.googleapis.com/maps/api/staticmap?center="+lat+","+lng+"&zoom=13&size=600x600&key=AIzaSyAYeVRIphkYn8LRtRn-i2rQo2lzdTVb7DE&style=feature:water|color:0xABCBFD";
-
-
-
-	var pos = findPos($("#map"));
-	console.log($("#map"));
-	var x = 300;
-	var y = 300;
-	var c = $("#map")[0].getContext('2d');
-	var p = c.getImageData(x, y, 1, 1).data;
-	console.log(""+p[0]+","+p[1]+","+p[2]);
-
-
+	
+	//WATER IS 171,213,253
 	
 
 	
 	if (upperbound>lat && lowerbound<lat && leftboundnosi<lng && rightbound>lng){
 	    if (curdist <= remdist) {
-		remdist = remdist - curdist;
-		document.getElementById("remdist").innerHTML = "Remaining Distance: " + remdist; // Update the remaining distance
-		console.log(e.latLng.lat() + "," + e.latLng.lng());
-		players[0].marker.position = new google.maps.LatLng(lat,lng);
-		players[0].circle.setCenter(new google.maps.LatLng(lat,lng));
-		players[0].marker.setMap(map); //setMap will render the marker.
-		players[0].circle.setMap(map);
+		
+		imageObj.src ="https://maps.googleapis.com/maps/api/staticmap?center="+lat+","+lng+"&zoom=32&size=600x600&key=AIzaSyAYeVRIphkYn8LRtRn-i2rQo2lzdTVb7DE&style=feature:water|color:0xABCBFD";
+		$(imageObj).load(function() {
+		    var pos = findPos($("#map"));
+		    var x = 300;
+		    var y = 300;
+		    var c = $("#map")[0].getContext('2d');
+		    var p = c.getImageData(x, y, 1, 1).data;
+		    if (!(p[0] > 169 && p[0] < 175 && p[1] > 199 && p[1] < 215 && p[2] > 249)){
+			remdist = remdist - curdist;
+			document.getElementById("remdist").innerHTML = "Remaining Distance: " + remdist;			
+			players[0].marker.position = new google.maps.LatLng(lat,lng);
+			players[0].circle.setCenter(new google.maps.LatLng(lat,lng));
+			players[0].marker.setMap(map); 
+			players[0].circle.setMap(map);
+		    }
+		
+		});  
 	    }
-	}else{
-	    window.alert("YOU'RE OUTSIDE NEW YORK")
 	}
 	
-	
+	else{
+	    window.alert("YOU'RE OUTSIDE NEW YORK")
+	}
     });
     ////////////////////////
     //END OF MOVING PLAYER//
@@ -170,7 +171,7 @@ function initialize() {
 
     document.getElementsByName("turn")[0].addEventListener("click", function() {
 	remdist = maxdist;
-	document.getElementById("remdist").innerHTML = "Remaining Distance: " + remdist; // Update the remaining distance.
+	document.getElementById("remdist").innerHTML = "Remaining Distance: " + remdist;
     });
     
 }

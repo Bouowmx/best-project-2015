@@ -15,7 +15,11 @@ websocket.onmessage = function(event) {
 	if (state == "login") {
 		name = event.data;
 		if (name == "true") {
-			name = elements[2].value;
+			name = document.getElementById("name").value;
+			document.getElementById("name").removeEventListener(elementEventListeners[0]);
+			document.getElementById("submit").removeEventListener(elementEventListeners[1]);
+			elementEventListeners = [];
+			while (document.body.firstChild) {document.body.removeChild(document.body.firstChild);}
 			rooms();
 		} else {alert("Name already in use.");}
 	}
@@ -86,15 +90,11 @@ function elementsRemoveEventListeners() {for (var i = 0; i < elements.length; i+
 
 function login() {
 	state = "login";
-	stateChange();
-	createElementAppendTextNode(0, "h1", "Welcome to Best Project 2015");
-	createElementAppendTextNode(1, "div", "Enter the name you will use:");
-	createElementAddEventListener(2, "input", "keypress", function(event) {if (event.which == 13) {websocket.send("name\x1c" + elements[2].value);}});
-	createElementAppendTextNode(3, "span", " ");
-	createElementAddEventListener(4, "input", "click", function(event) {websocket.send("name\x1c" + elements[2].value);});
-	elements[4].setAttribute("type", "submit");
-	documentBodyAppendElements();
-	elements[2].focus();
+	elementEventListeners[0] = function(event) {if (event.which == 13) {websocket.send("name\x1c" + document.getElementById("name").value);}};
+	elementEventListeners[1] = function(event) {websocket.send("name\x1c" + document.getElementById("name").value);};
+	document.getElementById("name").addEventListener("keypress", elementEventListeners[0]);
+	document.getElementById("submit").addEventListener("click", elementEventListeners[1]);
+	document.getElementById("name").focus()
 }
 
 function removeChild(parent, child) {elements[parent].removeChild(elements[child]);}
