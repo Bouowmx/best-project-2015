@@ -41,7 +41,6 @@ function initialize() {
 	context.drawImage(imageObj,0,0);
     };
     imageObj.crossOrigin='http://maps.googleapis.com/crossdomain.xml';
-    imageObj.src ="https://maps.googleapis.com/maps/api/staticmap?center=40.6772917298741,-73.89129638671875&zoom=13&size=600x600&key=AIzaSyAYeVRIphkYn8LRtRn-i2rQo2lzdTVb7DE&style=feature:water|color:0xABCBFD";
     
 
     var lowerbound = 40.53898024667195;
@@ -56,8 +55,16 @@ function initialize() {
     ///////////////////////////////////
     //THIS MAKES A RANDOM SPAWN POINT//
     ///////////////////////////////////
-    var randlat = ((Math.random()*((upperbound - lowerbound)*100000000000000))/100000000000000)+lowerbound
-    var randlng = ((Math.random()*((rightbound - leftboundnosi)*100000000000000))/100000000000000)+leftboundnosi
+    var randomspawns = [
+	(40.688343, -73.990517),
+	(40.618668, -74.008198),
+	(40.589474, -73.967171),
+	(40.591429, -73.897648),
+	(40.585066, -73.816452),
+	(40.556119, -73.922195),
+	(40.638235, -73.930435),
+	//SO FAR ONLY LOWER PART OF BROOKLYN
+    ]
     var marker_0 = new google.maps.Marker({position: new google.maps.LatLng(randlat, randlng),map: map, title: "player"});
     /////////////////////////////
     //END OF RANDOM SPAWN POINT//
