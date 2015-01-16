@@ -1,11 +1,24 @@
 import uwsgi
 
 def application(env, start_response):
-	uwsgi.websocket_handshake(env['HTTP_SEC_WEBSOCKET_KEY'], env.get('HTTP_ORIGIN', ''))
+	uwsgi.websocket_handshake(env["HTTP_SEC_WEBSOCKET_KEY"], env.get("HTTP_ORIGIN", ""))
 	if (not uwsgi.cache_exists("names")):
 		uwsgi.cache_update("names", "\x1f")
-	if (not uwsgi.cache_exists("rooms")):
-		uwsgi.cache_update("rooms", "\x1d\x1d10\x1e1\x1eReimu\x1f1\x1f1\x1eMarisa\x1f2\x1f2\x1eRumia\x1f3\x1f3\x1eDaiyousei4\x1f4\x1d11\x1e3\x1eMeiling\x1f1\x1f1\x1eKoakuma\x1f2\x1f2\x1ePatchouli\x1f3\x1f3\x1eSakuya4\x1f4")
+	if (not uwsgi.cache_exists("roomNumbers")):
+		uwsgi.cache_update("roomNumbers", "\x1f")
+	#Some static data for testing purposes:
+	if (uwsgi.cache_get("names") == "\x1f"):
+		uwsgi.cache_update("names", uwsgi.cache_get("names") + "\x1f".join(["Reimu", "Marisa", "Rumia", "Daiyousei", "Cirno", "Meiling", "Koakuma", "Patchouli", "Sakuya", "Remilia", "Flandre", "Letty"]))
+	if (uwsgi.cache_get("roomNumbers") == "\x1f"):
+		uwsgi.cache_update("roomNumbers", uwsgi.cache_get("roomNumbers") + "\x1f".join([str(number) for number in [0, 10, 11]]))
+	if (not uwsgi.cache_exists("0")):
+		uwsgi.cache_update("0", "1\x1eReimu\x1f1\x1f1\x1eMarisa\x1f2\x1f2\x1eRumia\x1f3\x1f3\x1eDaiyousei\x1f4\x1f4")
+	if (not uwsgi.cache_exists("10")):
+		uwsgi.cache_update("10", "2\x1eCirno\x1f1\x1f1\x1eMeiling\x1f2\x1f2\x1eKoakuma\x1f3\x1f3\x1ePatchouli\x1f4\x1f4")
+	if (not uwsgi.cache_exists("11")):
+		uwsgi.cache_update("11", "3\x1eSakuya\x1f1\x1f1\x1eRemilia\x1f2\x1f2\x1eFlandre\x1f3\x1f3\x1eLetty\x1f4\x1f4")
+	playersMax = 4
+	roomsMax = 100
 	while (True):
 		msg = uwsgi.websocket_recv()
 		msg_type = msg.split("\x1c")[0]
@@ -19,6 +32,30 @@ def application(env, start_response):
 				print msg_data + " disconnected."
 				print names
 			return [""]
+		if (msg_type == "join"):
+			rooms = uwsgi.cache_get("rooms").split("\x1d");
+			roomNumber = msg_data.split("\x1d")[0]
+			name = msg_data.split("\x1d")[1]
+			i = 0
+			while (i < len(rooms)):
+				if (roomNumber == int(rooms[i][:room[i].index("\x1e")])):
+					room = rooms[i].split("\x1e")
+					join = False
+					j = 2
+					while (j < len(room)):
+						if (room[j] == "\x1f\x1f"):
+							room[j] = name + room[j]
+							rooms[i] = "\x1e".join(room)
+							uwsgi.cache_update("rooms", "\x1d".join(rooms))
+							uwsgi.websocket_send("true")
+							break
+						j += 1
+					if (join):
+						break
+					if (j == len(room)):
+						uwsgi.websocket_send("false")
+						break
+				i += 1
 		if (msg_type == "name"):
 			if (msg_data in uwsgi.cache_get("names").split("\x1f")):
 				uwsgi.websocket_send("false")
@@ -30,54 +67,26 @@ def application(env, start_response):
 				print uwsgi.cache_get("names").split("\x1f")
 				uwsgi.websocket_send("true")
 		if (msg_type == "roomCreate"):
-			roomNumbers = [];
-			rooms = uwsgi.cache_get("rooms").split("\x1d")
-			for room in rooms:
-				if (room == ""):
-					continue
-				roomNumbers.append(int(room[:room.index("\x1e")]))
+			roomNumbers = uwsgi.cache_get("roomNumbers").split("\x1f")
+			if (len(roomNumbers) == 100): #The cache is full
+				uwsgi.websocket_send("false")
+			roomNumbers = [int(number) for number in roomNumbers if number]
+			#Not most efficient but easy way to find the lowest available room number:
 			roomNumber = 0
-			if (roomNumbers[0] != 0):
-				uwsgi.websocket_send(str(0))
-			else:
-				for number in roomNumbers[1:]:
-					if (number - roomNumber >= 1):
-						uwsgi.websocket_send(str(roomNumber + 1))
-						break
-					else:
-						roomNumber = number
-			if (roomNumber == roomNumbers[len(roomNumbers) - 1]):
-				uwsgi.websocket_send(str(roomNumber + 1))
-			roomNumber += 1
-			i = 0
-			while (i < len(rooms) - 1):
-				if (rooms[i] == ""):
-					continue
-				if (roomNumber > rooms[i][:rooms[i].index("\x1e")]):
-					rooms.insert(i, str(roomNumber) + "\x1e1\x1e\x1f\x1f\x1e\x1f\x1f\x1e\x1f\x1f\x1e\x1f\x1f")
-					break
-				i += 1
-			uwsgi.cache_update("rooms", "\x1e".join(rooms))
+			while (roomNumber in roomNumbers):
+				roomNumber += 1
+			roomNumbers.append(roomNumber)
+			roomNumbers = sorted(roomNumbers)
+			uwsgi.cache_update("roomNumbers", "\x1f".join([str(number) for number in roomNumbers]))
+			roomNumber = str(roomNumber)
+			uwsgi.cache_update(roomNumber, "0" + playersMax * "\x1e\x1f\x1f")
+			uwsgi.websocket_send(roomNumber)
 		if (msg_type == "rooms"):
-			uwsgi.websocket_send(uwsgi.cache_get("rooms"))
+			rooms = []
+			for number in uwsgi.cache_get("roomNumbers").split("\x1f"):
+				if (number):
+					rooms.append(number + "\x1e" + uwsgi.cache_get(number))
+			uwsgi.websocket_send("\x1d".join(rooms))
+		################################################################################
 		if (msg_type == "wait"):
-			roomNumber = msg_data.split("\x1d")[0];
-			name = msg_data.split("\x1d")[1];
-			rooms = uwsgi.cache_get("rooms").split("\x1d")
-			for room in rooms:
-				if (room == ""):
-					continue
-				if (roomNumber == room[:room.index("\x1e")]):
-					room = room.split("\x1e")
-					#0: number, 1: current player, 2: P1, 3: P2, 4: P3, 5: P4
-					i = 2
-					while (i < len(room)):
-						if (room[i] == "\x1f\x1f"):
-							room[i] = name + room[i]
-							break
-						i += 1
-					if (i == len(room) - 1):
-						websocket_send("ready")
-					room = "\x1e".join(room)
-					uwsgi.cache_update("rooms", room)
-					uwsgi.websocket_send(room)
+			pass
