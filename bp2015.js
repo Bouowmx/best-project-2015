@@ -7,14 +7,14 @@ var playersMax = 4;
 var roomNumber = -1;
 var state = "";
 var websocket = new WebSocket("ws://bp2015.themafia.info:9090");
-window.onbeforeunload = function(event) {websocket.send("close\x1c" + name);};
+window.onbeforeunload = function(event) {websocket.send("close\x1c" + roomNumber + "\x1f" + name);};
 websocket.onclose = function(event) {console.log("WebSocket connection closed: " + event.code);};
 websocket.onerror = function(event) {console.log("WebSocket error occurred.");};
 websocket.onmessage = function(event) {
 	console.log("received: \"" + event.data + "\"");
 	if (state == "join") {
 		if (event.data == "false") {
-			alert("Cannot join room.");
+			alert("Cannot join room that is full or in progress.");
 			rooms();
 		} else {roomCreate();}
 	} else if (state == "login") {
@@ -93,8 +93,14 @@ function elementsRemoveEventListeners() {for (var i = 0; i < elements.length; i+
 
 function login() {
 	state = "login";
-	elementEventListeners[0] = function(event) {if (event.which == 13) {websocket.send("name\x1c" + document.getElementById("name").value);}};
-	elementEventListeners[1] = function(event) {websocket.send("name\x1c" + document.getElementById("name").value);};
+	elementEventListeners[0] = function(event) {
+		if (websocket.readyState == 1) {if (event.which == 13) {websocket.send("name\x1c" + document.getElementById("name").value);}}
+		else {alert("Connecting to server.... Please wait.");}
+	};
+	elementEventListeners[1] = function(event) {
+		if (websocket.readyState == 1) {websocket.send("name\x1c" + document.getElementById("name").value);}
+		else {alert("Connecting to server.... Please wait.");}
+	}
 	document.getElementById("name").addEventListener("keypress", elementEventListeners[0]);
 	document.getElementById("submit").addEventListener("click", elementEventListeners[1]);
 	document.getElementById("name").focus()
@@ -117,7 +123,6 @@ function roomJoin(event) {
 	console.log("Join room " + elements[elements.indexOf(event.currentTarget) - 2].textContent);
 	clearInterval(intervalRoomsGet);
 	state = "join";
-	//stateChange();
 	roomNumber = parseInt(elements[elements.indexOf(event.currentTarget) - 2].textContent);
 	websocket.send("join\x1c" + roomNumber + "\x1f" + name);
 }
