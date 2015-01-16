@@ -25,11 +25,11 @@ websocket.onmessage = function(event) {
 			name = document.getElementById("name").value;
 			rooms();
 		} else {alert("Name already in use.");}
-	} else if (state == "rooms") {
+	} else if (state == "rooms") {//Format of room, as stored in server (ignore all spaces): Current player\x1ePlayer 1 name\x1fPlayer 1 latitude\x1fPlayer 1 longitude\x1eSame format for players 2-4.
 		var rooms_ = event.data;
 		rooms_ = rooms_.split("\x1d");
 		for (var i = 0; i < rooms_.length; i++) {
-			if (rooms_[i] != "") {
+			if (rooms_[i]) {
 				rooms_ = rooms_.slice(i);
 				break;
 			}
@@ -37,12 +37,15 @@ websocket.onmessage = function(event) {
 		}
 		for (var i = 0; i < rooms_.length; i++) {
 			var index = 7 + 4 * i;
-			if (elements[index]) {elements[index + 2].replaceChild(document.createTextNode((rooms_[i].split("\x1e").length - 2) + "/" + playersMax), elements[index + 2].firstChild);}
+			var playerCount = 0;
+			var room = rooms_[i].split("\x1e");
+			for (var j = 2; j < room.length; j++) {if (room[j].split("\x1f")[0]) {playerCount++;}}
+			if (elements[index]) {elements[index + 2].replaceChild(document.createTextNode(playerCount + "/" + playersMax), elements[index + 2].firstChild);} 
 			else {
 				createElement(index, "tr");
 				createElementAppendTextNode(index + 1, "td", rooms_[i].split("\x1e")[0]);
 				appendChild(index, index + 1);
-				createElementAppendTextNode(index + 2, "td", (rooms_[i].split("\x1e").length - 2) + "/" + playersMax);
+				createElementAppendTextNode(index + 2, "td", playerCount + "/" + playersMax);
 				appendChild(index, index + 2);
 				createElementAddEventListener(index + 3, "input", "click", roomJoin);
 				elements[index + 3].setAttribute("type", "button");
@@ -119,7 +122,7 @@ function roomJoin(event) {
 	clearInterval(intervalRoomsGet);
 	state = "join";
 	//stateChange();
-	websocket.send("join\x1c" + elements[elements.indexOf(event.currentTarget) - 2].textContent + "\x1d" + name);
+	websocket.send("join\x1c" + elements[elements.indexOf(event.currentTarget) - 2].textContent + "\x1f" + name);
 }
 
 function rooms() {
@@ -153,4 +156,4 @@ function stateChange() {
 	documentBodyRemoveElements();
 }
 
-login();})(); //Create a function that encloses the entire body and run it, so that nothing can be modified through the browser console.
+login();})(); //Create a function that encloses the entire body and run it, so that nothing can be modified through the browser console. 少名　針妙丸

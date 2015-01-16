@@ -6,17 +6,19 @@ def application(env, start_response):
 		uwsgi.cache_update("names", "\x1f")
 	if (not uwsgi.cache_exists("roomNumbers")):
 		uwsgi.cache_update("roomNumbers", "\x1f")
-	#Some static data for testing purposes:
+	#Static data for testing purposes:
 	if (uwsgi.cache_get("names") == "\x1f"):
-		uwsgi.cache_update("names", uwsgi.cache_get("names") + "\x1f".join(["Reimu", "Marisa", "Rumia", "Daiyousei", "Cirno", "Meiling", "Koakuma", "Patchouli", "Sakuya", "Remilia", "Flandre", "Letty"]))
+		uwsgi.cache_update("names", uwsgi.cache_get("names") + "\x1f".join(["Reimu", "Marisa", "Rumia", "Daiyousei", "Cirno", "Meiling", "Koakuma", "Patchouli", "Sakuya", "Remilia", "Flandre", "Letty", "Chen"]))
 	if (uwsgi.cache_get("roomNumbers") == "\x1f"):
-		uwsgi.cache_update("roomNumbers", uwsgi.cache_get("roomNumbers") + "\x1f".join([str(number) for number in [0, 10, 11]]))
+		uwsgi.cache_update("roomNumbers", uwsgi.cache_get("roomNumbers") + "\x1f".join([str(number) for number in [0, 10, 11, 12]]))
 	if (not uwsgi.cache_exists("0")):
 		uwsgi.cache_update("0", "1\x1eReimu\x1f1\x1f1\x1eMarisa\x1f2\x1f2\x1eRumia\x1f3\x1f3\x1eDaiyousei\x1f4\x1f4")
 	if (not uwsgi.cache_exists("10")):
 		uwsgi.cache_update("10", "2\x1eCirno\x1f1\x1f1\x1eMeiling\x1f2\x1f2\x1eKoakuma\x1f3\x1f3\x1ePatchouli\x1f4\x1f4")
 	if (not uwsgi.cache_exists("11")):
 		uwsgi.cache_update("11", "3\x1eSakuya\x1f1\x1f1\x1eRemilia\x1f2\x1f2\x1eFlandre\x1f3\x1f3\x1eLetty\x1f4\x1f4")
+	if (not uwsgi.cache_exists("12")):
+		uwsgi.cache_update("12", "0\x1eChen\x1f\x1f\x1e\x1f\x1f\x1e\x1f\x1f\x1e\x1f\x1f")
 	playersMax = 4
 	roomsMax = 100
 	while (True):
@@ -33,29 +35,23 @@ def application(env, start_response):
 				print names
 			return [""]
 		if (msg_type == "join"):
-			rooms = uwsgi.cache_get("rooms").split("\x1d");
-			roomNumber = msg_data.split("\x1d")[0]
-			name = msg_data.split("\x1d")[1]
-			i = 0
-			while (i < len(rooms)):
-				if (roomNumber == int(rooms[i][:room[i].index("\x1e")])):
-					room = rooms[i].split("\x1e")
-					join = False
-					j = 2
-					while (j < len(room)):
-						if (room[j] == "\x1f\x1f"):
-							room[j] = name + room[j]
-							rooms[i] = "\x1e".join(room)
-							uwsgi.cache_update("rooms", "\x1d".join(rooms))
-							uwsgi.websocket_send("true")
-							break
-						j += 1
-					if (join):
+			roomNumber = msg_data.split("\x1f")[0]
+			name = msg_data.split("\x1f")[1]
+			room = uwsgi.cache_get(roomNumber).split("\x1e")
+			if (room[0] != "0"):
+				uwsgi.websocket_send("false")
+			else:
+				i = 1
+				while (i < len(room)):
+					if ((room[i] == "\x1f\x1f") and (room[i] != name + "\x1f\x1f")):
+						room[i] = name + room[i]
+						room = "\x1e".join(room)
+						uwsgi.cache_update(roomNumber, room)
+						uwsgi.websocket_send(room)
 						break
-					if (j == len(room)):
-						uwsgi.websocket_send("false")
-						break
-				i += 1
+					i += 1
+				else:
+					uwsgi.websocket_send("false")
 		if (msg_type == "name"):
 			if (msg_data in uwsgi.cache_get("names").split("\x1f")):
 				uwsgi.websocket_send("false")
