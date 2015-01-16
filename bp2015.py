@@ -39,6 +39,7 @@ def application(env, start_response):
 			name = msg_data.split("\x1f")[1]
 			room = uwsgi.cache_get(roomNumber).split("\x1e")
 			if (room[0] != "0"):
+				print '''Room in progress: "''' + repr(room[0]) + '''"'''
 				uwsgi.websocket_send("false")
 			else:
 				i = 1
@@ -75,14 +76,15 @@ def application(env, start_response):
 			roomNumbers = sorted(roomNumbers)
 			uwsgi.cache_update("roomNumbers", "\x1f".join([str(number) for number in roomNumbers]))
 			roomNumber = str(roomNumber)
-			uwsgi.cache_update(roomNumber, "0" + playersMax * "\x1e\x1f\x1f")
+			uwsgi.cache_update(roomNumber, "0" + "\x1e" + msg_data + "\x1f\x1f" + (playersMax - 1) * "\x1e\x1f\x1f")
 			uwsgi.websocket_send(roomNumber)
+			print "Create" + roomNumber + ": " + repr(uwsgi.cache_get(roomNumber))
 		if (msg_type == "rooms"):
 			rooms = []
 			for number in uwsgi.cache_get("roomNumbers").split("\x1f"):
 				if (number):
 					rooms.append(number + "\x1e" + uwsgi.cache_get(number))
 			uwsgi.websocket_send("\x1d".join(rooms))
-		################################################################################
 		if (msg_type == "wait"):
-			pass
+			print "Wait " + msg_data.split("\x1f")[0] + ": " + repr(uwsgi.cache_get(msg_data.split("\x1f")[0]))
+			uwsgi.websocket_send(uwsgi.cache_get(msg_data.split("\x1f")[0]))

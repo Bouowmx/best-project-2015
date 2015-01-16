@@ -13,13 +13,10 @@ websocket.onerror = function(event) {console.log("WebSocket error occurred.");};
 websocket.onmessage = function(event) {
 	console.log("received: \"" + event.data + "\"");
 	if (state == "join") {
-		if (event.data == "true") {
-			roomCreate();
-			//Hopefully this is it.
-		} else {
+		if (event.data == "false") {
 			alert("Cannot join room.");
 			rooms();
-		}
+		} else {roomCreate();}
 	} else if (state == "login") {
 		if (event.data == "true") {
 			name = document.getElementById("name").value;
@@ -58,12 +55,11 @@ websocket.onmessage = function(event) {
 		elements.splice(7 + 4 * rooms_.length, elements.length - (7 + 4 * rooms_.length));
 	} else if (state == "wait") {
 		var room = event.data.split("\x1e");
-		console.log(room);
 		if (room == "ready") {
 			clearInterval(intervalWait);
 			//Go to game
 		}
-		else {for (var i = 0; i < playersMax; i++) {elements[2 + i].replaceChild(document.createTextNode("Player " + (i + 1) + ": " + room[2 + i].split("\x1f")[0]), elements[2 + i].firstChild);}}
+		else {for (var i = 0; i < playersMax; i++) {elements[2 + i].replaceChild(document.createTextNode("Player " + (i + 1) + ": " + room[1 + i].split("\x1f")[0]), elements[2 + i].firstChild);}}
 	} else if (state == "waitRoomNumber") {
 		roomNumber = parseInt(event.data);
 		roomCreate();
@@ -113,8 +109,8 @@ function roomCreate() {
 	createElementAppendTextNode(1, "div", "Waiting for players...");
 	for (var i = 0; i < playersMax; i++) {createElementAppendTextNode(2 + i, "div", "Player " + (i + 1) + ":");}
 	documentBodyAppendElements();
-	websocket.send("wait\x1c" + roomNumber + "\x1d" + name);
-	intervalWait = setInterval(function() {websocket.send("wait\x1c" + roomNumber + "\x1d" + name)}, 1000);
+	websocket.send("wait\x1c" + roomNumber + "\x1f" + name);
+	intervalWait = setInterval(function() {websocket.send("wait\x1c" + roomNumber + "\x1f" + name);}, 1000);
 }
 
 function roomJoin(event) {
@@ -122,7 +118,8 @@ function roomJoin(event) {
 	clearInterval(intervalRoomsGet);
 	state = "join";
 	//stateChange();
-	websocket.send("join\x1c" + elements[elements.indexOf(event.currentTarget) - 2].textContent + "\x1f" + name);
+	roomNumber = parseInt(elements[elements.indexOf(event.currentTarget) - 2].textContent);
+	websocket.send("join\x1c" + roomNumber + "\x1f" + name);
 }
 
 function rooms() {
@@ -133,7 +130,7 @@ function rooms() {
 		state = "waitRoomNumber";
 		clearInterval(intervalRoomsGet);
 		stateChange();
-		websocket.send("roomCreate\x1c");
+		websocket.send("roomCreate\x1c" + name);
 	});
 	elements[1].setAttribute("type", "button");
 	elements[1].value = "Create Room";
