@@ -60,13 +60,13 @@ websocket.onmessage = function(event) {
 			clearInterval(intervalWait);
 			//Go to game
 		}
-		else {for (var i = 0; i < playersMax; i++) {elements[2 + i].replaceChild(document.createTextNode("Player " + (i + 1) + ": " + room[1 + i].split("\x1f")[0]), elements[2 + i].firstChild);}}
+		else {for (var i = 0; i < playersMax; i++) {elements[3 + i].replaceChild(document.createTextNode("Player " + (i + 1) + ": " + room[1 + i].split("\x1f")[0]), elements[3 + i].firstChild);}}
 	} else if (state == "waitRoomNumber") {
 		if (event.data != "false") {
 			roomNumber = parseInt(event.data);
 			roomCreate();
 		}
-		else {alert("Cannot create room: maximum number of rooms has
+		else {alert("Cannot create room: maximum number of rooms has been reached.");}
 	}
 };
 websocket.onopen = function(event) {console.log("WebSocket connection opened.");};
@@ -112,9 +112,16 @@ function removeChild(parent, child) {elements[parent].removeChild(elements[child
 function roomCreate() {
 	state = "wait";
 	stateChange();
-	createElementAppendTextNode(0, "div", "Room " + roomNumber);
-	createElementAppendTextNode(1, "div", "Waiting for players...");
-	for (var i = 0; i < playersMax; i++) {createElementAppendTextNode(2 + i, "div", "Player " + (i + 1) + ":");}
+	createElementAddEventListener(0, "input", "click", function(event) {
+		clearInterval(intervalWait);
+		websocket.send("leave\x1c" + roomNumber + "\x1f" + name);
+		rooms();
+	});
+	elements[0].setAttribute("type", "button");
+	elements[0].value = "Back";
+	createElementAppendTextNode(1, "div", "Room " + roomNumber);
+	createElementAppendTextNode(2, "div", "Waiting for players...");
+	for (var i = 0; i < playersMax; i++) {createElementAppendTextNode(3 + i, "div", "Player " + (i + 1) + ":");}
 	documentBodyAppendElements();
 	websocket.send("wait\x1c" + roomNumber + "\x1f" + name);
 	intervalWait = setInterval(function() {websocket.send("wait\x1c" + roomNumber + "\x1f" + name);}, 1000);

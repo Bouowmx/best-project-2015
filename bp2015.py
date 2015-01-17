@@ -29,20 +29,44 @@ def application(env, start_response):
 		if (msg_type == "close"):
 			roomNumber = msg_data.split("\x1f")[0]
 			name = msg_data.split("\x1f")[1]
-			if (name and (int(roomNumber) > -1)):
+			if (name):
 				names = uwsgi.cache_get("names").split("\x1f")
 				names.remove(name)
 				uwsgi.cache_update("names", "\x1f".join(names))
+			if (int(roomNumber) > -1):
 				room = uwsgi.cache_get(roomNumber).split("\x1e")
 				i = 1
 				while (i < len(room)):
 					if (name == room[i].split("\x1f")[0]):
 						room[i] = "\x1f\x1f"
-						uwsgi.cache_update(roomNumber, "\x1e".join(room))
+						room = "\x1e".join(room)
+						uwsgi.cache_update(roomNumber, room)
+						if (room[room.index("\x1e"):] == playersMax * "\x1e\x1f\x1f"):
+							roomNumbers = uwsgi.cache_get("roomNumbers").split("\x1f")
+							roomNumbers.remove(roomNumber)
+							uwsgi.cache_update("roomNumbers", "\x1f".join(roomNumbers))
+							uwsgi.cache_del(roomNumber)
 						break
 					i += 1
 				print name + " disconnected."
 			return [""]
+		if (msg_type == "leave"):
+			roomNumber = msg_data.split("\x1f")[0]
+			name = msg_data.split("\x1f")[1]
+			room = uwsgi.cache_get(roomNumber).split("\x1e")
+			i = 1
+			while (i < len(room)):
+				if (name == room[i].split("\x1f")[0]):
+					room[i] = "\x1f\x1f"
+					room = "\x1e".join(room)
+					uwsgi.cache_update(roomNumber, room)
+					if (room[room.index("\x1e"):] == playersMax * "\x1e\x1f\x1f"):
+						roomNumbers = uwsgi.cache_get("roomNumbers").split("\x1f")
+						roomNumbers.remove(roomNumber)
+						uwsgi.cache_update("roomNumbers", "\x1f".join(roomNumbers))
+						uwsgi.cache_del(roomNumber)
+					break
+				i += 1
 		if (msg_type == "join"):
 			roomNumber = msg_data.split("\x1f")[0]
 			name = msg_data.split("\x1f")[1]
