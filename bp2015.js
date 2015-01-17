@@ -13,10 +13,11 @@ websocket.onerror = function(event) {console.log("WebSocket error occurred.");};
 websocket.onmessage = function(event) {
 	console.log("received: \"" + event.data + "\"");
 	if (state == "join") {
-		if (event.data == "false") {
+		if (event.data != "false") {roomCreate();}
+		else {
 			alert("Cannot join room that is full or in progress.");
 			rooms();
-		} else {roomCreate();}
+		}
 	} else if (state == "login") {
 		if (event.data == "true") {
 			name = document.getElementById("name").value;
@@ -61,8 +62,11 @@ websocket.onmessage = function(event) {
 		}
 		else {for (var i = 0; i < playersMax; i++) {elements[2 + i].replaceChild(document.createTextNode("Player " + (i + 1) + ": " + room[1 + i].split("\x1f")[0]), elements[2 + i].firstChild);}}
 	} else if (state == "waitRoomNumber") {
-		roomNumber = parseInt(event.data);
-		roomCreate();
+		if (event.data != "false") {
+			roomNumber = parseInt(event.data);
+			roomCreate();
+		}
+		else {alert("Cannot create room: maximum number of rooms has
 	}
 };
 websocket.onopen = function(event) {console.log("WebSocket connection opened.");};
@@ -93,14 +97,11 @@ function elementsRemoveEventListeners() {for (var i = 0; i < elements.length; i+
 
 function login() {
 	state = "login";
-	elementEventListeners[0] = function(event) {
-		if (websocket.readyState == 1) {if (event.which == 13) {websocket.send("name\x1c" + document.getElementById("name").value);}}
-		else {alert("Connecting to server.... Please wait.");}
-	};
 	elementEventListeners[1] = function(event) {
 		if (websocket.readyState == 1) {websocket.send("name\x1c" + document.getElementById("name").value);}
-		else {alert("Connecting to server.... Please wait.");}
+		else {if (websocket.readyState == 0) {alert("Connecting to server… Please wait.");}}
 	}
+	elementEventListeners[0] = function(event) {if (event.which == 13) {elementEventListeners[1](event);}}
 	document.getElementById("name").addEventListener("keypress", elementEventListeners[0]);
 	document.getElementById("submit").addEventListener("click", elementEventListeners[1]);
 	document.getElementById("name").focus()

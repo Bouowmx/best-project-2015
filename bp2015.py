@@ -29,9 +29,9 @@ def application(env, start_response):
 		if (msg_type == "close"):
 			roomNumber = msg_data.split("\x1f")[0]
 			name = msg_data.split("\x1f")[1]
-			if (name and (roomNumber >= -1)):
+			if (name and (int(roomNumber) > -1)):
 				names = uwsgi.cache_get("names").split("\x1f")
-				names.remove(msg_data)
+				names.remove(name)
 				uwsgi.cache_update("names", "\x1f".join(names))
 				room = uwsgi.cache_get(roomNumber).split("\x1e")
 				i = 1
@@ -41,7 +41,7 @@ def application(env, start_response):
 						uwsgi.cache_update(roomNumber, "\x1e".join(room))
 						break
 					i += 1
-				print msg_data + " disconnected."
+				print name + " disconnected."
 			return [""]
 		if (msg_type == "join"):
 			roomNumber = msg_data.split("\x1f")[0]
