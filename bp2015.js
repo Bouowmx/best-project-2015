@@ -20,7 +20,7 @@ websocket.onmessage = function(event) {
 		}
 	} else if (state == "login") {
 		if (event.data == "true") {
-			name = document.getElementById("name").value;
+			name = document.getElementById("name").value.trim();
 			rooms();
 		} else {alert("Name already in use.");}
 	} else if (state == "rooms") {//Format of room, as stored in server (ignore all spaces): Current player\x1ePlayer 1 name\x1fPlayer 1 latitude\x1fPlayer 1 longitude\x1eSame format for players 2-4.
@@ -98,7 +98,7 @@ function elementsRemoveEventListeners() {for (var i = 0; i < elements.length; i+
 function login() {
 	state = "login";
 	elementEventListeners[1] = function(event) {
-		if (websocket.readyState == 1) {websocket.send("name\x1c" + document.getElementById("name").value);}
+		if (websocket.readyState == 1) {websocket.send("name\x1c" + document.getElementById("name").value.trim());}
 		else {if (websocket.readyState == 0) {alert("Connecting to server… Please wait.");}}
 	}
 	elementEventListeners[0] = function(event) {if (event.which == 13) {elementEventListeners[1](event);}}
