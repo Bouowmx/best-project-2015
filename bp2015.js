@@ -39,8 +39,8 @@ websocket.onmessage = function(event) {
 			var room = rooms_[i].split("\x1e");
 			for (var j = 2; j < room.length; j++) {if (room[j].split("\x1f")[0]) {playerCount++;}}
 			if (elements[index]) {
-				elements[index + 1].replaceChild(document.createTextNode(room[0]), elements[index + 1].firstChild);
-				elements[index + 2].replaceChild(document.createTextNode(playerCount + "/" + playersMax), elements[index + 2].firstChild);
+				elementReplaceTextNode(index + 1, room[0]);
+				elementReplaceTextNode(index + 2, playerCount + "/" + playersMax);
 			} else {
 				createElement(index, "tr");
 				createElementAppendTextNode(index + 1, "td", room[0]);
@@ -62,7 +62,7 @@ websocket.onmessage = function(event) {
 			clearInterval(intervalWait);
 			//Go to game
 		}
-		else {for (var i = 0; i < playersMax; i++) {elements[3 + i].replaceChild(document.createTextNode("Player " + (i + 1) + ": " + room[1 + i].split("\x1f")[0]), elements[3 + i].firstChild);}}
+		else {for (var i = 0; i < playersMax; i++) {elementReplaceTextNode(3 + i, "Player " + (i + 1) + ": " + room[1 + i].split("\x1f")[0]);}}
 	} else if (state == "waitRoomNumber") {
 		if (event.data != "false") {
 			roomNumber = parseInt(event.data);
@@ -94,6 +94,8 @@ function documentBodyRemoveElements() {
 	while (document.body.firstChild) {document.body.removeChild(document.body.firstChild);}
 	elements = [];
 }
+
+function elementReplaceTextNode(index, text) {elements[index].replaceChild(document.createTextNode(text), elements[index].firstChild);}
 
 function elementsRemoveEventListeners() {for (var i = 0; i < elements.length; i++) {elements[i].removeEventListener(elementEventListeners[i]);}}
 
@@ -139,6 +141,7 @@ function roomJoin(event) {
 function rooms() {
 	state = "rooms";
 	stateChange();
+	roomNumber = -1;
 	createElementAppendTextNode(0, "div", "Welcome " + name);
 	createElementAddEventListener(1, "input", "click", function(event) {
 		state = "waitRoomNumber";
