@@ -11,7 +11,7 @@ window.onbeforeunload = function(event) {websocket.send("close\x1c" + roomNumber
 websocket.onclose = function(event) {console.log("WebSocket connection closed: " + event.code);};
 websocket.onerror = function(event) {console.log("WebSocket error occurred.");};
 websocket.onmessage = function(event) {
-	console.log("received: \"" + event.data + "\"");
+	console.log("received: \"" + JSON.stringify(event.data) + "\"");
 	if (state == "join") {
 		if (event.data != "false") {roomCreate();}
 		else {
@@ -38,10 +38,12 @@ websocket.onmessage = function(event) {
 			var playerCount = 0;
 			var room = rooms_[i].split("\x1e");
 			for (var j = 2; j < room.length; j++) {if (room[j].split("\x1f")[0]) {playerCount++;}}
-			if (elements[index]) {elements[index + 2].replaceChild(document.createTextNode(playerCount + "/" + playersMax), elements[index + 2].firstChild);} 
-			else {
+			if (elements[index]) {
+				elements[index + 1].replaceChild(document.createTextNode(room[0]), elements[index + 1].firstChild);
+				elements[index + 2].replaceChild(document.createTextNode(playerCount + "/" + playersMax), elements[index + 2].firstChild);
+			} else {
 				createElement(index, "tr");
-				createElementAppendTextNode(index + 1, "td", rooms_[i].split("\x1e")[0]);
+				createElementAppendTextNode(index + 1, "td", room[0]);
 				appendChild(index, index + 1);
 				createElementAppendTextNode(index + 2, "td", playerCount + "/" + playersMax);
 				appendChild(index, index + 2);
@@ -128,7 +130,6 @@ function roomCreate() {
 }
 
 function roomJoin(event) {
-	console.log("Join room " + elements[elements.indexOf(event.currentTarget) - 2].textContent);
 	clearInterval(intervalRoomsGet);
 	state = "join";
 	roomNumber = parseInt(elements[elements.indexOf(event.currentTarget) - 2].textContent);
