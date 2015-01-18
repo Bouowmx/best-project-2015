@@ -46,7 +46,7 @@ websocket.onmessage = function(event) {
 				createElementAppendTextNode(index + 2, "td", playerCount + "/" + playersMax);
 				appendChild(index, index + 2);
 				createElementAddEventListener(index + 3, "input", "click", roomJoin);
-				elements[index + 3].setAttribute("type", "button");
+				elements[index + 3].type = "button";
 				elements[index + 3].value = "Join";
 				appendChild(index, index + 3);
 				appendChild(2, index);
@@ -117,7 +117,7 @@ function roomCreate() {
 		websocket.send("leave\x1c" + roomNumber + "\x1f" + name);
 		rooms();
 	});
-	elements[0].setAttribute("type", "button");
+	elements[0].type = "button";
 	elements[0].value = "Back";
 	createElementAppendTextNode(1, "div", "Room " + roomNumber);
 	createElementAppendTextNode(2, "div", "Waiting for players...");
@@ -145,7 +145,7 @@ function rooms() {
 		stateChange();
 		websocket.send("roomCreate\x1c" + name);
 	});
-	elements[1].setAttribute("type", "button");
+	elements[1].type = "button";
 	elements[1].value = "Create Room";
 	createElement(2, "table");
 	createElement(3, "tr");
