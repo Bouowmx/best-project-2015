@@ -3,9 +3,13 @@
 <head>
 <meta charset="UTF-8">
 <script defer src="bp2015.js"></script>
+<script src="https://apis.google.com/js/auth.js?onload=init"></script>
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAYeVRIphkYn8LRtRn-i2rQo2lzdTVb7DE"></script>
+<script src="http://code.jquery.com/jquery-1.11.2.min.js"></script>
 <style>
-        * {font-family: Verdana, sans-serif}
+	* {font-family: Verdana, sans-serif}
   	#instructions {background-color: #87CEFA; padding: 10px; position: relative; z-index: 3}
+	html, body, #map-canvas {height: 100%; margin: 0; padding: 0;}
 	table, td, th {border: solid black 1px}
 	table {border-collapse: collapse}
 	.container {position: relative}
