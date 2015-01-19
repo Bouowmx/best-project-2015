@@ -12,7 +12,12 @@ websocket.onclose = function(event) {console.log("WebSocket connection closed: "
 websocket.onerror = function(event) {console.log("WebSocket error occurred.");};
 websocket.onmessage = function(event) {
 	console.log("received: " + JSON.stringify(event.data));
-	if (state == "join") {
+	if (event.data.split("\x1c")[0] == "chat") {
+		chat = event.data.split("\x1c")[1].split("\x1f");
+		if (state == "rooms") {
+			elements[1].value += "\n" + chat[0] + ": " + chat[1];
+		}
+	} else if (state == "join") {
 		if (event.data != "false") {roomCreate();}
 		else {
 			alert("Cannot join room that is full or in progress.");
@@ -68,7 +73,10 @@ websocket.onmessage = function(event) {
 		else {alert("Cannot create room: maximum number of rooms has been reached.");}
 	}
 };
-websocket.onopen = function(event) {console.log("WebSocket connection opened.");};
+websocket.onopen = function(event) {
+	console.log("WebSocket connection opened.");
+	setInterval(function() {websocket.send("\x06");}, 100);
+};
 
 function appendChild(parent, child) {elements[parent].appendChild(elements[child]);}
 
@@ -108,7 +116,7 @@ function login() {
 	elementEventListeners[0] = function(event) {if (event.which == 13) {elementEventListeners[1](event);}}
 	document.getElementById("name").addEventListener("keypress", elementEventListeners[0]);
 	document.getElementById("submit").addEventListener("click", elementEventListeners[1]);
-	document.getElementById("name").focus()
+	document.getElementById("name").focus();
 }
 
 function removeChild(parent, child) {elements[parent].removeChild(elements[child]);}
@@ -148,8 +156,13 @@ function rooms() {
 	createElement(3, "input");
 	elementSetAttributes(3, [["maxLength", 100], ["size", 100]]);
 	createElementAppendTextNode(4, "span", " ");
-	createElement(5, "input");
+	createElementAddEventListener(5, "input", "click", function(event) {
+		websocket.send("chat\x1c" + roomNumber + "\x1f" + name + "\x1f" + elements[3].value.trim().replace(/(\x1c|\x1d|\x1e|\x1f)/g, ""));
+		elementSetAttributes(3, [["value", ""]]);
+	});
 	elementSetAttributes(5, [["type", "submit"]]);
+	elementEventListeners[3] = function(event) {if (event.which == 13) {elementEventListeners[5](event);}};
+	elements[3].addEventListener("keypress", elementEventListeners[3]);
 	createElement(6, "br");
 	createElementAddEventListener(7, "input", "click", function(event) {
 		state = "waitRoomNumber";
