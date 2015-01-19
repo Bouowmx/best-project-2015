@@ -6,37 +6,68 @@
 <script src="https://apis.google.com/js/auth.js?onload=init"></script>
 <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAYeVRIphkYn8LRtRn-i2rQo2lzdTVb7DE"></script>
 <script src="http://code.jquery.com/jquery-1.11.2.min.js"></script>
+<link rel="stylesheet" href="http://yui.yahooapis.com/pure/0.5.0/pure-min.css">
 <style>
 	* {font-family: Verdana, sans-serif}
-  	#instructions {background-color: #87CEFA; padding: 10px; position: relative; z-index: 3}
+	#instructbg {background-color: #A1A1A1; opacity: 0.85; padding: 10px; position: relative; z-index: 3;}
+  	#instructions { font-size: 24px !important; }
+	b {font-size: 24px;}
 	html, body, #map-canvas {height: 100%; margin: 0; padding: 0;}
 	table, td, th {border: solid black 1px}
 	table {border-collapse: collapse}
 	.container {position: relative}
-	.container:before {background-image: url("static/bg.png"); background-repeat: no-repeat; content: ""; height: 100%; opacity: 0.5; position: absolute; width: 100%; z-index: 1}
+	.container:before {background-image: url("static/bg.png"); background-size: cover; background-repeat: no-repeat; content: ""; height: 100%; opacity: 0.75; position: absolute; width: 100%; z-index: 1}
 	.content {position: relative; z-index: 2;}​
 </style>
 <title>BP2015</title>
 <body>
-<div class="container">
-	<div class="content">
-		<h1>Welcome to Best Project 2015</h1>
-		<p>Enter the name you will use:</p>
-		<input id="name" type="text">
-		<input id="submit" type="submit">
-		<p id="instructions">
-			Instructions:<br>
-			1. Enter a name and hit submit.<br>
-			2. Join a room with other players or create a room and wait for the match to begin!<br>
-			3. In game, you are set as either a killer, a cop, or an innocent.<br>
-			&nbsp;&nbsp;&nbsp;&nbsp;a. As a killer, your objective is to kill all the innocent players without them determining who you are.<br>
-			&nbsp;&nbsp;&nbsp;&nbsp;b. As a cop, your objective is to determine through investigation and cooperation who the killer is and arrest him.<br>
-			&nbsp;&nbsp;&nbsp;&nbsp;c. As an innocent, your objective is to communicate with the other still-living innocent players and the cop (whose identity is unknown) to arrest all the killers. You may vote to kill one player every turn.<br>
-			4. You can move 3000 meters each turn. Movement is based on the streets you walk to get to places. Cops can also choose to arrest a target player.<br>
-			5. Hit end turn. This will refresh your movement and change the time from day to night or vice versa. (At night, your visibility is greatly reduced).<br>
-			6. The game ends when either all killers are arrested or dead or all innocents and all cops are dead.<br>
-		</p><br><br><br><br><br><br><br><br><br><br><br><br>
+  <div class="container">
+    <div class="content"> 
+      <div class="pure-g">
+	<div class="pure-u-1-5"></div>
+	<div class="pure-u-3-5">
+	  <center><h1>Welcome to Best Project 2015</h1>
+	    Enter the name you will use:
+	    <input id="name" type="text">
+	    <input id="submit" type="submit">
+	  </center>
+	  <hr>
+	  <div id="instructbg">
+	    <p id="instructions">
+	      <b>
+		<center>Instructions:</center><br><br>
+		1. Enter a name and hit submit.<br><br>
+		2. Join a room with other players or create a room and wait for the match to begin!<br><br>
+		3. Move 3000 meters around NYC during day. Movement is based on the streets you drive.<br><br>
+		4. Hit end turn. This will refresh your movement and change the time from day to night or vice versa.<br><br>
+		The killer strikes at night!<br><br>
+		The cop arrests at night<br><br>
+		5. The game ends when either all killers are arrested or all innocents.<br>
+	      </b>
+	    </p><br><hr>
+	    <center><h1>WHO ARE YOU?</h1></center>
+	    <div class="pure-g" style="font-size: 18px;">
+		<div class="pure-u-1-3">
+		  <center><img src="static/NYPD.png">
+		  <br>Find and arrest the killer</center>
+		</div>
+		<div class="pure-u-1-3">
+		  <center><img src="static/Mafia.png">
+		<br>Deceive and kill</center>
+		</div>
+		<div class="pure-u-1-3">
+	      	  <center><img src="static/inno.png">
+		  <br>Try not to die or be arrested</center>
+		</div>
+	      
+	    </div>
+	  </div>
+
+	  <br>Sean Yip, Albert Yeung, Steven Zabolotny, Richard Zhan &#169;
 	</div>
-</div>
+	<div class="pure-u-1-5"></div>
+      </div>
+    </div>
+  </div>
 </body>
 </html>
