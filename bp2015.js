@@ -48,8 +48,7 @@ websocket.onmessage = function(event) {
 				createElementAppendTextNode(index + 2, "td", playerCount + "/" + playersMax);
 				appendChild(index, index + 2);
 				createElementAddEventListener(index + 3, "input", "click", roomJoin);
-				elements[index + 3].type = "button";
-				elements[index + 3].value = "Join";
+				elementSetAttributes(index + 3, [["type", "button"], ["value", "Join"]]);
 				appendChild(index, index + 3);
 				appendChild(8, index);
 			}
@@ -95,6 +94,7 @@ function documentBodyRemoveElements() {
 	elements = [];
 }
 
+function elementSetAttributes(index, attributes) {for (var i = 0; i < attributes.length; i++) {elements[index].setAttribute(attributes[i][0], attributes[i][1]);}}
 function elementReplaceTextNode(index, text) {elements[index].replaceChild(document.createTextNode(text), elements[index].firstChild);}
 
 function elementsRemoveEventListeners() {for (var i = 0; i < elements.length; i++) {elements[i].removeEventListener(elementEventListeners[i]);}}
@@ -121,8 +121,7 @@ function roomCreate() {
 		websocket.send("leave\x1c" + roomNumber + "\x1f" + name);
 		rooms();
 	});
-	elements[0].type = "button";
-	elements[0].value = "Back";
+	elementSetAttributes(0, [["type", "button"], ["value", "Back"]]);
 	createElementAppendTextNode(1, "div", "Room " + roomNumber);
 	createElementAppendTextNode(2, "div", "Waiting for players...");
 	for (var i = 0; i < playersMax; i++) {createElementAppendTextNode(3 + i, "div", "Player " + (i + 1) + ":");}
@@ -144,17 +143,13 @@ function rooms() {
 	roomNumber = -1;
 	createElementAppendTextNode(0, "div", "Welcome " + name);
 	createElement(1, "textarea");
-	elements[1].cols = 100;
-	elements[1].readOnly = true;
-	elements[1].rows = 10;
-	elements[1].value = "Welcome to Best Project 2015 chat. No filtering.";
+	elementSetAttributes(1, [["cols", 100], ["readOnly", true], ["rows", 10], ["value", "Welcome to Best Project 2015 chat. Say anything!"]]);
 	createElement(2, "br");
 	createElement(3, "input");
-	elements[3].maxLength = 100;
-	elements[3].size = 100;
+	elementSetAttributes(3, [["maxLength", 100], ["size", 100]]);
 	createElementAppendTextNode(4, "span", " ");
 	createElement(5, "input");
-	elements[5].type = "submit";
+	elementSetAttributes(5, [["type", "submit"]]);
 	createElement(6, "br");
 	createElementAddEventListener(7, "input", "click", function(event) {
 		state = "waitRoomNumber";
@@ -162,8 +157,7 @@ function rooms() {
 		stateChange();
 		websocket.send("roomCreate\x1c" + name);
 	});
-	elements[7].type = "button";
-	elements[7].value = "Create Room";
+	elementSetAttributes(7, [["type", "button"], ["value", "Create Room"]]);
 	createElement(8, "table");
 	createElement(9, "tr");
 	createElementAppendTextNode(10, "th", "#");
@@ -173,7 +167,6 @@ function rooms() {
 	createElementAppendTextNode(12, "th", "Join");
 	appendChild(9, 12);
 	appendChild(8, 9);
-	console.log(elements[7]);
 	documentBodyAppendElements([0, 1, 2, 3, 4, 5, 6, 7, 8]);
 	websocket.send("rooms\x1c");
 	intervalRoomsGet = setInterval(function() {websocket.send("rooms\x1c")}, 1000);
