@@ -11,7 +11,7 @@ window.onbeforeunload = function(event) {websocket.send("close\x1c" + roomNumber
 websocket.onclose = function(event) {console.log("WebSocket connection closed: " + event.code);};
 websocket.onerror = function(event) {console.log("WebSocket error occurred.");};
 websocket.onmessage = function(event) {
-	console.log("received: \"" + JSON.stringify(event.data) + "\"");
+	console.log("received: " + JSON.stringify(event.data));
 	if (state == "join") {
 		if (event.data != "false") {roomCreate();}
 		else {
@@ -19,10 +19,8 @@ websocket.onmessage = function(event) {
 			rooms();
 		}
 	} else if (state == "login") {
-		if (event.data == "true") {
-			name = document.getElementById("name").value.trim();
-			rooms();
-		} else {alert("Name already in use.");}
+		if (event.data == "true") {rooms();}
+		else {alert("Name already in use.");}
 	} else if (state == "rooms") {//Format of room, as stored in server (ignore all spaces): Current player\x1ePlayer 1 name\x1fPlayer 1 latitude\x1fPlayer 1 longitude\x1eSame format for players 2-4.
 		var rooms_ = event.data;
 		rooms_ = rooms_.split("\x1d");
@@ -94,7 +92,7 @@ function documentBodyRemoveElements() {
 	elements = [];
 }
 
-function elementSetAttributes(index, attributes) {for (var i = 0; i < attributes.length; i++) {elements[index].setAttribute(attributes[i][0], attributes[i][1]);}}
+function elementSetAttributes(index, attributes) {for (var i = 0; i < attributes.length; i++) {elements[index][attributes[i][0]] = attributes[i][1];}}
 function elementReplaceTextNode(index, text) {elements[index].replaceChild(document.createTextNode(text), elements[index].firstChild);}
 
 function elementsRemoveEventListeners() {for (var i = 0; i < elements.length; i++) {elements[i].removeEventListener(elementEventListeners[i]);}}
@@ -102,8 +100,10 @@ function elementsRemoveEventListeners() {for (var i = 0; i < elements.length; i+
 function login() {
 	state = "login";
 	elementEventListeners[1] = function(event) {
-		if (websocket.readyState == 1) {websocket.send("name\x1c" + document.getElementById("name").value.trim());}
-		else {if (websocket.readyState == 0) {alert("Connecting to server… Please wait.");}}
+		if (websocket.readyState == 1) {
+			name = document.getElementById("name").value.trim().replace(/(\x1c|\x1d|\x1e|\x1f)/g, "");
+			websocket.send("name\x1c" + name);
+		} else {if (websocket.readyState == 0) {alert("Connecting to server… Please wait.");}}
 	}
 	elementEventListeners[0] = function(event) {if (event.which == 13) {elementEventListeners[1](event);}}
 	document.getElementById("name").addEventListener("keypress", elementEventListeners[0]);
