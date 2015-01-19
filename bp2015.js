@@ -1,5 +1,5 @@
 (function() {var elements = [];
-var elementEventListeners = [];
+var elementeListeners = [];
 var name = "";
 var intervalRoomsGet = 0;
 var intervalWait = 0;
@@ -7,28 +7,28 @@ var playersMax = 4;
 var roomNumber = -1;
 var state = "";
 var websocket = new WebSocket("ws://bp2015.themafia.info:9090");
-window.onbeforeunload = function(event) {websocket.send("close\x1c" + roomNumber + "\x1f" + name);};
-websocket.onclose = function(event) {console.log("WebSocket connection closed: " + event.code);};
-websocket.onerror = function(event) {console.log("WebSocket error occurred.");};
-websocket.onmessage = function(event) {
-	console.log("received: " + JSON.stringify(event.data));
-	if (event.data.split("\x1c")[0] == "chat") {
-		chat = event.data.split("\x1c")[1].split("\x1f");
+window.onbeforeunload = function(e) {websocket.send("close" + roomNumber + "" + name);};
+websocket.onclose = function(e) {console.log("WebSocket connection closed: " + e.code);};
+websocket.onerror = function(e) {console.log("WebSocket error occurred.");};
+websocket.onmessage = function(e) {
+	console.log("received: " + JSON.stringify(e.data));
+	if (e.data.split("")[0] == "chat") {
+		chat = e.data.split("")[1].split("");
 		if (state == "rooms") {
 			elements[1].value += "\n" + chat[0] + ": " + chat[1];
 		}
 	} else if (state == "join") {
-		if (event.data != "false") {roomCreate();}
+		if (e.data != "false") {roomCreate();}
 		else {
 			alert("Cannot join room that is full or in progress.");
 			rooms();
 		}
 	} else if (state == "login") {
-		if (event.data == "true") {rooms();}
+		if (e.data == "true") {rooms();}
 		else {alert("Name already in use.");}
-	} else if (state == "rooms") {//Format of room, as stored in server (ignore all spaces): Current player\x1ePlayer 1 name\x1fPlayer 1 latitude\x1fPlayer 1 longitude\x1eSame format for players 2-4.
-		var rooms_ = event.data;
-		rooms_ = rooms_.split("\x1d");
+	} else if (state == "rooms") {//Format of room, as stored in server (ignore all spaces): Current playerPlayer 1 namePlayer 1 latitudePlayer 1 longitudeSame format for players 2-4.
+		var rooms_ = e.data;
+		rooms_ = rooms_.split("");
 		for (var i = 0; i < rooms_.length; i++) {
 			if (rooms_[i]) {
 				rooms_ = rooms_.slice(i);
@@ -39,8 +39,8 @@ websocket.onmessage = function(event) {
 		for (var i = 0; i < rooms_.length; i++) {
 			var index = 13 + 4 * i;
 			var playerCount = 0;
-			var room = rooms_[i].split("\x1e");
-			for (var j = 2; j < room.length; j++) {if (room[j].split("\x1f")[0]) {playerCount++;}}
+			var room = rooms_[i].split("");
+			for (var j = 2; j < room.length; j++) {if (room[j].split("")[0]) {playerCount++;}}
 			if (elements[index]) {
 				elementReplaceTextNode(index + 1, room[0]);
 				elementReplaceTextNode(index + 2, playerCount + "/" + playersMax);
@@ -50,7 +50,7 @@ websocket.onmessage = function(event) {
 				appendChild(index, index + 1);
 				createElementAppendTextNode(index + 2, "td", playerCount + "/" + playersMax);
 				appendChild(index, index + 2);
-				createElementAddEventListener(index + 3, "input", "click", roomJoin);
+				createElementaddEventListener(index + 3, "input", "click", roomJoin);
 				elementSetAttributes(index + 3, [["type", "button"], ["value", "Join"]]);
 				appendChild(index, index + 3);
 				appendChild(8, index);
@@ -59,21 +59,21 @@ websocket.onmessage = function(event) {
 		for (var i = 13 + 4 * rooms_.length; i < elements.length; i += 4) {removeChild(8, i);}
 		elements.splice(13 + 4 * rooms_.length, elements.length - (13 + 4 * rooms_.length));
 	} else if (state == "wait") {
-		var room = event.data.split("\x1e");
+		var room = e.data.split("");
 		if (room == "ready") {
 			clearInterval(intervalWait);
 			//Go to game
 		}
-		else {for (var i = 0; i < playersMax; i++) {elementReplaceTextNode(3 + i, "Player " + (i + 1) + ": " + room[1 + i].split("\x1f")[0]);}}
+		else {for (var i = 0; i < playersMax; i++) {elementReplaceTextNode(3 + i, "Player " + (i + 1) + ": " + room[1 + i].split("")[0]);}}
 	} else if (state == "waitRoomNumber") {
-		if (event.data != "false") {
-			roomNumber = parseInt(event.data);
+		if (e.data != "false") {
+			roomNumber = parseInt(e.data);
 			roomCreate();
 		}
 		else {alert("Cannot create room: maximum number of rooms has been reached.");}
 	}
 };
-websocket.onopen = function(event) {
+websocket.onopen = function(e) {
 	console.log("WebSocket connection opened.");
 	setInterval(function() {websocket.send("\x06");}, 100);
 };
@@ -81,10 +81,10 @@ websocket.onopen = function(event) {
 function appendChild(parent, child) {elements[parent].appendChild(elements[child]);}
 
 function createElement(index, element) {elements[index] = document.createElement(element);}
-function createElementAddEventListener(index, element, event, eventListener) {
+function createElementaddEventListener(index, element, e, eListener) {
 	elements[index] = document.createElement(element);
-	elementEventListeners[index] = eventListener;
-	elements[index].addEventListener(event, elementEventListeners[index]);
+	elementeListeners[index] = eListener;
+	elements[index].addEventListener(e, elementeListeners[index]);
 }
 function createElementAppendTextNode(index, element, text) {
 	elements[index] = document.createElement(element);
@@ -103,19 +103,19 @@ function documentBodyRemoveElements() {
 function elementSetAttributes(index, attributes) {for (var i = 0; i < attributes.length; i++) {elements[index][attributes[i][0]] = attributes[i][1];}}
 function elementReplaceTextNode(index, text) {elements[index].replaceChild(document.createTextNode(text), elements[index].firstChild);}
 
-function elementsRemoveEventListeners() {for (var i = 0; i < elements.length; i++) {elements[i].removeEventListener(elementEventListeners[i]);}}
+function elementsRemoveeListeners() {for (var i = 0; i < elements.length; i++) {elements[i].removeeListener(elementeListeners[i]);}}
 
 function login() {
 	state = "login";
-	elementEventListeners[1] = function(event) {
+	elementeListeners[1] = function(e) {
 		if (websocket.readyState == 1) {
-			name = document.getElementById("name").value.trim().replace(/(\x1c|\x1d|\x1e|\x1f)/g, "");
-			websocket.send("name\x1c" + name);
+			name = document.getElementById("name").value.trim().replace(/(|||)/g, "");
+			websocket.send("name" + name);
 		} else {if (websocket.readyState == 0) {alert("Connecting to server… Please wait.");}}
 	}
-	elementEventListeners[0] = function(event) {if (event.which == 13) {elementEventListeners[1](event);}}
-	document.getElementById("name").addEventListener("keypress", elementEventListeners[0]);
-	document.getElementById("submit").addEventListener("click", elementEventListeners[1]);
+	elementeListeners[0] = function(e) {if (e.which == 13) {elementeListeners[1](e);}}
+	document.getElementById("name").addEventListener("keypress", elementeListeners[0]);
+	document.getElementById("submit").addEventListener("click", elementeListeners[1]);
 	document.getElementById("name").focus();
 }
 
@@ -124,9 +124,9 @@ function removeChild(parent, child) {elements[parent].removeChild(elements[child
 function roomCreate() {
 	state = "wait";
 	stateChange();
-	createElementAddEventListener(0, "input", "click", function(event) {
+	createElementaddEventListener(0, "input", "click", function(e) {
 		clearInterval(intervalWait);
-		websocket.send("leave\x1c" + roomNumber + "\x1f" + name);
+		websocket.send("leave" + roomNumber + "" + name);
 		rooms();
 	});
 	elementSetAttributes(0, [["type", "button"], ["value", "Back"]]);
@@ -134,15 +134,15 @@ function roomCreate() {
 	createElementAppendTextNode(2, "div", "Waiting for players...");
 	for (var i = 0; i < playersMax; i++) {createElementAppendTextNode(3 + i, "div", "Player " + (i + 1) + ":");}
 	documentBodyAppendElements();
-	websocket.send("wait\x1c" + roomNumber + "\x1f" + name);
-	intervalWait = setInterval(function() {websocket.send("wait\x1c" + roomNumber + "\x1f" + name);}, 1000);
+	websocket.send("wait" + roomNumber + "" + name);
+	intervalWait = setInterval(function() {websocket.send("wait" + roomNumber + "" + name);}, 1000);
 }
 
-function roomJoin(event) {
+function roomJoin(e) {
 	clearInterval(intervalRoomsGet);
 	state = "join";
-	roomNumber = parseInt(elements[elements.indexOf(event.currentTarget) - 2].textContent);
-	websocket.send("join\x1c" + roomNumber + "\x1f" + name);
+	roomNumber = parseInt(elements[elements.indexOf(e.currentTarget) - 2].textContent);
+	websocket.send("join" + roomNumber + "" + name);
 }
 
 function rooms() {
@@ -156,19 +156,19 @@ function rooms() {
 	createElement(3, "input");
 	elementSetAttributes(3, [["maxLength", 100], ["size", 100]]);
 	createElementAppendTextNode(4, "span", " ");
-	createElementAddEventListener(5, "input", "click", function(event) {
-		websocket.send("chat\x1c" + roomNumber + "\x1f" + name + "\x1f" + elements[3].value.trim().replace(/(\x1c|\x1d|\x1e|\x1f)/g, ""));
+	createElementaddEventListener(5, "input", "click", function(e) {
+		websocket.send("chat" + roomNumber + "" + name + "" + elements[3].value.trim().replace(/(|||)/g, ""));
 		elementSetAttributes(3, [["value", ""]]);
 	});
 	elementSetAttributes(5, [["type", "submit"]]);
-	elementEventListeners[3] = function(event) {if (event.which == 13) {elementEventListeners[5](event);}};
-	elements[3].addEventListener("keypress", elementEventListeners[3]);
+	elementeListeners[3] = function(e) {if (e.which == 13) {elementeListeners[5](e);}};
+	elements[3].addEventListener("keypress", elementeListeners[3]);
 	createElement(6, "br");
-	createElementAddEventListener(7, "input", "click", function(event) {
+	createElementaddEventListener(7, "input", "click", function(e) {
 		state = "waitRoomNumber";
 		clearInterval(intervalRoomsGet);
 		stateChange();
-		websocket.send("roomCreate\x1c" + name);
+		websocket.send("roomCreate" + name);
 	});
 	elementSetAttributes(7, [["type", "button"], ["value", "Create Room"]]);
 	createElement(8, "table");
@@ -181,12 +181,12 @@ function rooms() {
 	appendChild(9, 12);
 	appendChild(8, 9);
 	documentBodyAppendElements([0, 1, 2, 3, 4, 5, 6, 7, 8]);
-	websocket.send("rooms\x1c");
-	intervalRoomsGet = setInterval(function() {websocket.send("rooms\x1c")}, 1000);
+	websocket.send("rooms");
+	intervalRoomsGet = setInterval(function() {websocket.send("rooms")}, 1000);
 }
 
 function stateChange() {
-	elementsRemoveEventListeners();
+	elementsRemoveeListeners();
 	documentBodyRemoveElements();
 }
 
