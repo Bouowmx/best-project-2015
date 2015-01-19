@@ -9,7 +9,15 @@ var roomNumber = -1;
 var state = "";
 var websocket = new WebSocket("ws://bp2015.themafia.info:9090");
 window.onbeforeunload = function(e) {websocket.send("close" + roomNumber + "" + name);};
-websocket.onclose = function(e) {console.log("WebSocket connection closed: " + e.code);};
+websocket.onclose = function(e) {
+	console.log("WebSocket connection closed: " + e.code);
+	alert("Disconnected.");
+	clearInterval(intervalPingPong);
+	clearInterval(intervalRoomsGet);
+	clearInterval(intervalWait);
+	elementsRemoveEventListeners();
+	elementEventListeners = [];
+};
 websocket.onerror = function(e) {console.log("WebSocket error occurred.");};
 websocket.onmessage = function(e) {
 	console.log("received: " + JSON.stringify(e.data));
@@ -51,7 +59,7 @@ websocket.onmessage = function(e) {
 				appendChild(index, index + 1);
 				createElementAppendTextNode(index + 2, "td", playerCount + "/" + playersMax);
 				appendChild(index, index + 2);
-				createElementaddEventListener(index + 3, "input", "click", roomJoin);
+				createElementAddEventListener(index + 3, "input", "click", roomJoin);
 				elementSetAttributes(index + 3, [["type", "button"], ["value", "Join"]]);
 				appendChild(index, index + 3);
 				appendChild(8, index);
@@ -82,10 +90,9 @@ websocket.onopen = function(e) {
 function appendChild(parent, child) {elements[parent].appendChild(elements[child]);}
 
 function createElement(index, element) {elements[index] = document.createElement(element);}
-function createElementaddEventListener(index, element, e, eListener) {
+function createElementAddEventListener(index, element, event, eventListener) {
 	elements[index] = document.createElement(element);
-	elementEventListeners[index] = eListener;
-	elements[index].addEventListener(e, elementEventListeners[index]);
+	elementAddEventListener(index, event, eventListener);
 }
 function createElementAppendTextNode(index, element, text) {
 	elements[index] = document.createElement(element);
@@ -101,22 +108,27 @@ function documentBodyRemoveElements() {
 	elements = [];
 }
 
+function elementAddEventListener(index, event, eventListener) {
+	if (elementEventListeners[index]) {elementEventListeners[index].push([event, eventListener]);}
+	else {elementEventListeners[index] = [[event, eventListener]];}
+	elements[index].addEventListener(event, eventListener);
+}
 function elementSetAttributes(index, attributes) {for (var i = 0; i < attributes.length; i++) {elements[index][attributes[i][0]] = attributes[i][1];}}
 function elementReplaceTextNode(index, text) {elements[index].replaceChild(document.createTextNode(text), elements[index].firstChild);}
 
-function elementsRemoveEventListeners() {for (var i = 0; i < elements.length; i++) {elements[i].removeEventListener(elementEventListeners[i]);}}
+function elementsRemoveEventListeners() {for (var i = 0; i < elements.length; i++) {if (elementEventListeners[i]) {for (var j = 0; j < elementEventListeners[i].length; j++) {elements[i].removeEventListener(elementEventListeners[i][j][0], elementEventListeners[i][j][1]);}}}}
 
 function login() {
 	state = "login";
-	elementEventListeners[1] = function(e) {
+	elementEventListeners[1] = [["click", function(e) {
 		if (websocket.readyState == 1) {
 			name = document.getElementById("name").value.trim().replace(/(|||)/g, "");
 			websocket.send("name" + name);
 		} else {if (websocket.readyState == 0) {alert("Connecting to server… Please wait.");}}
-	}
-	elementEventListeners[0] = function(e) {if (e.which == 13) {elementEventListeners[1](e);}}
-	document.getElementById("name").addEventListener("keypress", elementEventListeners[0]);
-	document.getElementById("submit").addEventListener("click", elementEventListeners[1]);
+	}]];
+	elementEventListeners[0] = [["keypress", function(e) {if (e.which == 13) {elementEventListeners[1][0][1](e);}}]];
+	document.getElementById("name").addEventListener("keypress", elementEventListeners[0][0][1]);
+	document.getElementById("submit").addEventListener("click", elementEventListeners[1][0][1]);
 	document.getElementById("name").focus();
 }
 
@@ -125,7 +137,7 @@ function removeChild(parent, child) {elements[parent].removeChild(elements[child
 function roomCreate() {
 	state = "wait";
 	stateChange();
-	createElementaddEventListener(0, "input", "click", function(e) {
+	createElementAddEventListener(0, "input", "click", function(e) {
 		clearInterval(intervalWait);
 		websocket.send("leave" + roomNumber + "" + name);
 		rooms();
@@ -154,18 +166,17 @@ function rooms() {
 	createElement(1, "textarea");
 	elementSetAttributes(1, [["cols", 100], ["readOnly", true], ["rows", 10], ["value", "Welcome to Best Project 2015 chat. Say anything!"]]);
 	createElement(2, "br");
-	createElement(3, "input");
-	elementSetAttributes(3, [["maxLength", 100], ["size", 100]]);
 	createElementAppendTextNode(4, "span", " ");
-	createElementaddEventListener(5, "input", "click", function(e) {
-		websocket.send("chat" + roomNumber + "" + name + "" + elements[3].value.trim().replace(/(|||)/g, ""));
+	createElementAddEventListener(5, "input", "click", function(e) {
+		chat = elements[3].value.trim().replace(/(|||)/g, "");
+		if (chat) {websocket.send("chat" + roomNumber + "" + name + "" + chat);}
 		elementSetAttributes(3, [["value", ""]]);
 	});
 	elementSetAttributes(5, [["type", "submit"]]);
-	elementEventListeners[3] = function(e) {if (e.which == 13) {elementEventListeners[5](e);}};
-	elements[3].addEventListener("keypress", elementEventListeners[3]);
+	createElementAddEventListener(3, "input", "keypress", function(e) {if (e.which == 13) {elementEventListeners[5][0][1](e);}});
+	elementSetAttributes(3, [["maxLength", 100], ["size", 100]]);
 	createElement(6, "br");
-	createElementaddEventListener(7, "input", "click", function(e) {
+	createElementAddEventListener(7, "input", "click", function(e) {
 		state = "waitRoomNumber";
 		clearInterval(intervalRoomsGet);
 		stateChange();
