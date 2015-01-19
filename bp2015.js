@@ -1,6 +1,7 @@
 (function() {var elements = [];
-var elementeListeners = [];
+var elementEventListeners = [];
 var name = "";
+var intervalPingPong = 0
 var intervalRoomsGet = 0;
 var intervalWait = 0;
 var playersMax = 4;
@@ -75,7 +76,7 @@ websocket.onmessage = function(e) {
 };
 websocket.onopen = function(e) {
 	console.log("WebSocket connection opened.");
-	setInterval(function() {websocket.send("\x06");}, 100);
+	intervalPingPong = setInterval(function() {websocket.send("\x06");}, 100);
 };
 
 function appendChild(parent, child) {elements[parent].appendChild(elements[child]);}
@@ -83,8 +84,8 @@ function appendChild(parent, child) {elements[parent].appendChild(elements[child
 function createElement(index, element) {elements[index] = document.createElement(element);}
 function createElementaddEventListener(index, element, e, eListener) {
 	elements[index] = document.createElement(element);
-	elementeListeners[index] = eListener;
-	elements[index].addEventListener(e, elementeListeners[index]);
+	elementEventListeners[index] = eListener;
+	elements[index].addEventListener(e, elementEventListeners[index]);
 }
 function createElementAppendTextNode(index, element, text) {
 	elements[index] = document.createElement(element);
@@ -103,19 +104,19 @@ function documentBodyRemoveElements() {
 function elementSetAttributes(index, attributes) {for (var i = 0; i < attributes.length; i++) {elements[index][attributes[i][0]] = attributes[i][1];}}
 function elementReplaceTextNode(index, text) {elements[index].replaceChild(document.createTextNode(text), elements[index].firstChild);}
 
-function elementsRemoveeListeners() {for (var i = 0; i < elements.length; i++) {elements[i].removeeListener(elementeListeners[i]);}}
+function elementsRemoveEventListeners() {for (var i = 0; i < elements.length; i++) {elements[i].removeEventListener(elementEventListeners[i]);}}
 
 function login() {
 	state = "login";
-	elementeListeners[1] = function(e) {
+	elementEventListeners[1] = function(e) {
 		if (websocket.readyState == 1) {
 			name = document.getElementById("name").value.trim().replace(/(|||)/g, "");
 			websocket.send("name" + name);
 		} else {if (websocket.readyState == 0) {alert("Connecting to server… Please wait.");}}
 	}
-	elementeListeners[0] = function(e) {if (e.which == 13) {elementeListeners[1](e);}}
-	document.getElementById("name").addEventListener("keypress", elementeListeners[0]);
-	document.getElementById("submit").addEventListener("click", elementeListeners[1]);
+	elementEventListeners[0] = function(e) {if (e.which == 13) {elementEventListeners[1](e);}}
+	document.getElementById("name").addEventListener("keypress", elementEventListeners[0]);
+	document.getElementById("submit").addEventListener("click", elementEventListeners[1]);
 	document.getElementById("name").focus();
 }
 
@@ -161,8 +162,8 @@ function rooms() {
 		elementSetAttributes(3, [["value", ""]]);
 	});
 	elementSetAttributes(5, [["type", "submit"]]);
-	elementeListeners[3] = function(e) {if (e.which == 13) {elementeListeners[5](e);}};
-	elements[3].addEventListener("keypress", elementeListeners[3]);
+	elementEventListeners[3] = function(e) {if (e.which == 13) {elementEventListeners[5](e);}};
+	elements[3].addEventListener("keypress", elementEventListeners[3]);
 	createElement(6, "br");
 	createElementaddEventListener(7, "input", "click", function(e) {
 		state = "waitRoomNumber";
@@ -186,7 +187,7 @@ function rooms() {
 }
 
 function stateChange() {
-	elementsRemoveeListeners();
+	elementsRemoveEventListeners();
 	documentBodyRemoveElements();
 }
 
