@@ -1,5 +1,3 @@
-
-//http://jsfiddle.net/DV9Bw/1/
 var maxdist = 3000 ;
 function removemax(){
     maxdist = 90999090090909;
@@ -33,43 +31,51 @@ function findPos(obj) {
 }
 function initialize() {
     removemax();
+
+
     var canvas = document.getElementById("map");
     var context = canvas.getContext('2d');
-    
     var imageObj = new Image();
     imageObj.onload = function(){
 	context.drawImage(imageObj,0,0);
     };
     imageObj.crossOrigin='http://maps.googleapis.com/crossdomain.xml';
-    imageObj.src ="https://maps.googleapis.com/maps/api/staticmap?center=40.6772917298741,-73.89129638671875&zoom=13&size=600x600&key=AIzaSyAYeVRIphkYn8LRtRn-i2rQo2lzdTVb7DE&style=feature:water|color:0xABCBFD";
+    imageObj.src ="https://maps.googleapis.com/maps/api/staticmap?center=40.6772917298741,-73.89129638671875&zoom=13&size=1x1&key=AIzaSyAYeVRIphkYn8LRtRn-i2rQo2lzdTVb7DE&style=feature:water|color:0xABCBFD";
     
-
     var lowerbound = 40.53898024667195;
     var leftbound = -74.26071166992188;
     var rightbound = -73.71081975097656;
     var upperbound = 40.89275342420696;
     var leftboundnosi = -74.0423583984375;
-    
+
+    //////////////////////
+    //SETTING UP THE MAP//
+    //////////////////////
     var map = new google.maps.Map(document.getElementById('map-canvas'), {center: {lat: 40.7819, lng: -73.8883}, zoom: 10});
 
 
-    ///////////////////////////////////
-    //THIS MAKES A RANDOM SPAWN POINT//
-    ///////////////////////////////////
+    /////////////////////////////////
+    //SETTING UP RANDOM SPAWN POINT//
+    /////////////////////////////////
     var randlat = ((Math.random()*((upperbound - lowerbound)*100000000000000))/100000000000000)+lowerbound
     var randlng = ((Math.random()*((rightbound - leftboundnosi)*100000000000000))/100000000000000)+leftboundnosi
     var marker_0 = new google.maps.Marker({position: new google.maps.LatLng(randlat, randlng),map: map, title: "player"});
-    /////////////////////////////
-    //END OF RANDOM SPAWN POINT//
-    /////////////////////////////
 
-
+    //////////////////////
+    //SETTING UP PATHING//
+    //////////////////////
+    
     var directionsService = new google.maps.DirectionsService();
     var directionsDisplay = new google.maps.DirectionsRenderer();
     directionsDisplay.setOptions({preserveViewport:true,
 				  clickable: false,
 				  markerOptions: {visible: false}
 				 });
+    var getDistance = function(x,y){
+	//testing purposes
+	return Math.sqrt(Math.pow(x.lat() - y.lat(),2) + Math.pow(x.lng() - y.lng(),2));
+    }
+    
     var players = [];
     players[0] = {marker: marker_0,
                   circle: 0,
@@ -82,16 +88,11 @@ function initialize() {
     players[0].circle = new google.maps.Circle(circleDrawer(map,players[0].marker.position,4000));
     
 
-    var getDistance = function(x,y){
-	//console.log(Math.sqrt(Math.pow(x.lat() - y.lat(),2) + Math.pow(x.lng() - y.lng(),2)));
-	return Math.sqrt(Math.pow(x.lat() - y.lat(),2) + Math.pow(x.lng() - y.lng(),2));
-    }
+    
 
 
 
-    /////////////////////
-    //MOVING THE PLAYER//
-    /////////////////////
+   
     var curdist = 0;
     var remdist = maxdist; // This is how much the player has left to move in the current turn.
     google.maps.event.addListener(map, "mousemove", function(e){
@@ -108,26 +109,26 @@ function initialize() {
 	});
 	
     });
+    /////////////////////
+    //MOVING THE PLAYER//
+    /////////////////////
     google.maps.event.addListener(map, "rightclick", function(e) {
 
 	lat = e.latLng.lat();
 	lng = e.latLng.lng();
 	
-	//WATER IS 171,213,253
-	
-
-	
-	if (upperbound>lat && lowerbound<lat && leftboundnosi<lng && rightbound>lng){
-	    if (curdist <= remdist) {
-		
-		imageObj.src ="https://maps.googleapis.com/maps/api/staticmap?center="+lat+","+lng+"&zoom=32&size=600x600&key=AIzaSyAYeVRIphkYn8LRtRn-i2rQo2lzdTVb7DE&style=feature:water|color:0xABCBFD";
+	if (upperbound>lat && lowerbound<lat && leftboundnosi<lng && rightbound>lng){ //tests the NY boundaries
+	    if (curdist <= remdist && $("#turn")[0].className == "button-success pure-button") { //tests movement left
+		//tests water
+		imageObj.src ="https://maps.googleapis.com/maps/api/staticmap?center="+lat+","+lng+"&zoom=32&size=1x1&key=AIzaSyAYeVRIphkYn8LRtRn-i2rQo2lzdTVb7DE&style=feature:water|color:0xABCBFD";
 		$(imageObj).load(function() {
 		    var pos = findPos($("#map"));
-		    var x = 300;
-		    var y = 300;
+
+
 		    var c = $("#map")[0].getContext('2d');
-		    var p = c.getImageData(x, y, 1, 1).data;
+		    var p = c.getImageData(0, 0, 1, 1).data;
 		    if (!(p[0] > 169 && p[0] < 175 && p[1] > 199 && p[1] < 215 && p[2] > 249)){
+
 			remdist = remdist - curdist;
 			document.getElementById("remdist").innerHTML = "Remaining Distance: " + remdist;			
 			players[0].marker.position = new google.maps.LatLng(lat,lng);
@@ -144,9 +145,8 @@ function initialize() {
 	    window.alert("YOU'RE OUTSIDE NEW YORK")
 	}
     });
-    ////////////////////////
-    //END OF MOVING PLAYER//
-    ////////////////////////
+
+   
 
     var NewYorkOutline = [
  	new google.maps.LatLng(lowerbound,leftboundnosi),
@@ -168,10 +168,16 @@ function initialize() {
 
 
     
-
     document.getElementsByName("turn")[0].addEventListener("click", function() {
 	remdist = maxdist;
 	document.getElementById("remdist").innerHTML = "Remaining Distance: " + remdist;
+	this.className = "pure-button pure-button-disabled";
+    });
+    
+
+    
+    $(window).resize(function(){
+	google.maps.event.trigger(map,"resize");
     });
     
 }
