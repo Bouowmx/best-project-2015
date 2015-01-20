@@ -32,7 +32,6 @@ websocket.onmessage = function(e) {
 		chat_ = e.data.split("")[1].split("");
 		if (elements[elementsIndexChat].value.split("\n").length == 100) {elements[elementsIndexChat].value = elements[elementsIndexChat].value.slice(0, elements[elementsIndexChat].value.lastIndexOf("\n", elements[elementsIndexChat].value.length - 1));}
 		elements[elementsIndexChat].value = chat_[0] + ": " + chat_[1] + "\n" + elements[elementsIndexChat].value;
-		console.log(elementsIndexChat);
 	} else if (state == "join") {
 		if (e.data != "false") {roomCreate();}
 		else {
@@ -214,10 +213,10 @@ function rooms() {
 	websocket.send("rooms");
 	intervalRoomsGet = setInterval(function() {websocket.send("rooms")}, 1000);
 }
-	     
-		 function stateChange() {
-		     elementsRemoveEventListeners();
-		     documentBodyRemoveElements();
+
+function stateChange() {
+	elementsRemoveEventListeners();
+	documentBodyRemoveElements();
 }
 
 // MAPS.JS ====================================================================
