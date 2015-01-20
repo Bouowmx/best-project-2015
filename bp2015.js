@@ -1,4 +1,5 @@
 (function() {var elements = [];
+elementsIndexChat = 0;
 var elementEventListeners = [];
 var name = "";
 var intervalPingPong = 0
@@ -8,6 +9,7 @@ var playersMax = 4;
 var roomNumber = -1;
 var state = "";
 var websocket = new WebSocket("ws://bp2015.themafia.info:9090");
+//The following line and many lines after contain non-printable characters. You will need an editor that can show these characters: https://cloud.githubusercontent.com/assets/5422757/5805445/c669363c-9fdc-11e4-8fe8-a18b743a21d7.png
 window.onbeforeunload = function(e) {websocket.send("close" + roomNumber + "" + name);};
 websocket.onclose = function(e) {
 	console.log("WebSocket connection closed: " + e.code);
@@ -15,17 +17,22 @@ websocket.onclose = function(e) {
 	clearInterval(intervalPingPong);
 	clearInterval(intervalRoomsGet);
 	clearInterval(intervalWait);
-	elementsRemoveEventListeners();
-	elementEventListeners = [];
+	if (state == "login") {
+		document.getElementById("name").removeEventListener(elementEventListeners[0][0][0], elementEventListeners[0][0][1]);
+		document.getElementById("submit").removeEventListener(elementEventListeners[1][0][0], elementEventListeners[1][0][1]);
+	} else {
+		elementsRemoveEventListeners();
+		elementEventListeners = [];
+	}
 };
 websocket.onerror = function(e) {console.log("WebSocket error occurred.");};
 websocket.onmessage = function(e) {
 	console.log("received: " + JSON.stringify(e.data));
 	if (e.data.split("")[0] == "chat") {
-		chat = e.data.split("")[1].split("");
-		if (state == "rooms") {
-			elements[1].value += "\n" + chat[0] + ": " + chat[1];
-		}
+		chat_ = e.data.split("")[1].split("");
+		if (elements[elementsIndexChat].value.split("\n").length == 100) {elements[elementsIndexChat].value = elements[elementsIndexChat].value.slice(0, elements[elementsIndexChat].value.lastIndexOf("\n", elements[elementsIndexChat].value.length - 1));}
+		elements[elementsIndexChat].value = chat_[0] + ": " + chat_[1] + "\n" + elements[elementsIndexChat].value;
+		console.log(elementsIndexChat);
 	} else if (state == "join") {
 		if (e.data != "false") {roomCreate();}
 		else {
@@ -73,7 +80,7 @@ websocket.onmessage = function(e) {
 			clearInterval(intervalWait);
 			//Go to game
 		}
-		else {for (var i = 0; i < playersMax; i++) {elementReplaceTextNode(3 + i, "Player " + (i + 1) + ": " + room[1 + i].split("")[0]);}}
+		else {for (var i = 0; i < playersMax; i++) {elementReplaceTextNode(10 + i, "Player " + (i + 1) + ": " + room[1 + i].split("")[0]);}}
 	} else if (state == "waitRoomNumber") {
 		if (e.data != "false") {
 			roomNumber = parseInt(e.data);
@@ -84,10 +91,27 @@ websocket.onmessage = function(e) {
 };
 websocket.onopen = function(e) {
 	console.log("WebSocket connection opened.");
-	intervalPingPong = setInterval(function() {websocket.send("\x06");}, 100);
+	intervalPingPong = setInterval(function() {websocket.send("");}, 100);
 };
 
 function appendChild(parent, child) {elements[parent].appendChild(elements[child]);}
+
+function chat(index) {
+	elementsIndexChat = index;
+	createElement(elementsIndexChat, "textarea");
+	elementSetAttributes(elementsIndexChat, [["cols", 100], ["readOnly", true], ["rows", 10], ["value", "Welcome to Best Project 2015 chat. Say anything!"]]);
+	createElement(elementsIndexChat + 1, "br");
+	createElementAppendTextNode(elementsIndexChat + 3, "span", " ");
+	createElementAddEventListener(elementsIndexChat + 4, "input", "click", function(e) {
+		chat_ = elements[elementsIndexChat + 2].value.trim().replace(/(|||)/g, "");
+		if (chat_) {websocket.send("chat" + roomNumber + "" + name + "" + chat_);}
+		elementSetAttributes(elementsIndexChat + 2, [["value", ""]]);
+	});
+	elementSetAttributes(elementsIndexChat + 4, [["type", "submit"]]);
+	createElementAddEventListener(elementsIndexChat + 2, "input", "keypress", function(e) {if (e.which == 13) {elementEventListeners[5][0][1](e);}});
+	elementSetAttributes(elementsIndexChat + 2, [["maxLength", 100], ["size", 100]]);
+	createElement(elementsIndexChat + 5, "br");
+}
 
 function createElement(index, element) {elements[index] = document.createElement(element);}
 function createElementAddEventListener(index, element, event, eventListener) {
@@ -127,8 +151,9 @@ function login() {
 		} else {if (websocket.readyState == 0) {alert("Connecting to server… Please wait.");}}
 	}]];
 	elementEventListeners[0] = [["keypress", function(e) {if (e.which == 13) {elementEventListeners[1][0][1](e);}}]];
-	document.getElementById("name").addEventListener("keypress", elementEventListeners[0][0][1]);
-	document.getElementById("submit").addEventListener("click", elementEventListeners[1][0][1]);
+	document.getElementById("name").addEventListener(elementEventListeners[0][0][0], elementEventListeners[0][0][1]);
+	document.getElementById("name")["maxLength"] = 100;
+	document.getElementById("submit").addEventListener(elementEventListeners[1][0][0], elementEventListeners[1][0][1]);
 	document.getElementById("name").focus();
 }
 
@@ -143,9 +168,11 @@ function roomCreate() {
 		rooms();
 	});
 	elementSetAttributes(0, [["type", "button"], ["value", "Back"]]);
-	createElementAppendTextNode(1, "div", "Room " + roomNumber);
-	createElementAppendTextNode(2, "div", "Waiting for players...");
-	for (var i = 0; i < playersMax; i++) {createElementAppendTextNode(3 + i, "div", "Player " + (i + 1) + ":");}
+	createElement(1, "br");
+	chat(2);
+	createElementAppendTextNode(8, "div", "Room " + roomNumber);
+	createElementAppendTextNode(9, "div", "Waiting for players...");
+	for (var i = 0; i < playersMax; i++) {createElementAppendTextNode(10 + i, "div", "Player " + (i + 1) + ":");}
 	documentBodyAppendElements();
 	websocket.send("wait" + roomNumber + "" + name);
 	intervalWait = setInterval(function() {websocket.send("wait" + roomNumber + "" + name);}, 1000);
@@ -163,19 +190,7 @@ function rooms() {
 	stateChange();
 	roomNumber = -1;
 	createElementAppendTextNode(0, "div", "Welcome " + name);
-	createElement(1, "textarea");
-	elementSetAttributes(1, [["cols", 100], ["readOnly", true], ["rows", 10], ["value", "Welcome to Best Project 2015 chat. Say anything!"]]);
-	createElement(2, "br");
-	createElementAppendTextNode(4, "span", " ");
-	createElementAddEventListener(5, "input", "click", function(e) {
-		chat = elements[3].value.trim().replace(/(|||)/g, "");
-		if (chat) {websocket.send("chat" + roomNumber + "" + name + "" + chat);}
-		elementSetAttributes(3, [["value", ""]]);
-	});
-	elementSetAttributes(5, [["type", "submit"]]);
-	createElementAddEventListener(3, "input", "keypress", function(e) {if (e.which == 13) {elementEventListeners[5][0][1](e);}});
-	elementSetAttributes(3, [["maxLength", 100], ["size", 100]]);
-	createElement(6, "br");
+	chat(1);
 	createElementAddEventListener(7, "input", "click", function(e) {
 		state = "waitRoomNumber";
 		clearInterval(intervalRoomsGet);

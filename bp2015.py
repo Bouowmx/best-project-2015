@@ -27,7 +27,7 @@ def application(env, start_response):
 		msg = uwsgi.websocket_recv()
 		msg_type = ""
 		msg_data = ""
-		if (msg and (msg != "\x06")):
+		if (msg and (msg != "")):
 			msg_type = msg.split("")[0]
 			msg_data = msg.split("")[1]
 			print "Message: " + repr(msg) + "; " + "Type: " + repr(msg_type) + "; " + "Data: " + repr(msg_data)
