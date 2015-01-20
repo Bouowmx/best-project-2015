@@ -13,7 +13,6 @@ var websocket = new WebSocket("ws://bp2015.themafia.info:9090");
 window.onbeforeunload = function(e) {websocket.send("close" + roomNumber + "" + name);};
 websocket.onclose = function(e) {
 	console.log("WebSocket connection closed: " + e.code);
-	alert("Disconnected.");
 	clearInterval(intervalPingPong);
 	clearInterval(intervalRoomsGet);
 	clearInterval(intervalWait);
@@ -24,6 +23,7 @@ websocket.onclose = function(e) {
 		elementsRemoveEventListeners();
 		elementEventListeners = [];
 	}
+	alert("Disconnected.");
 };
 websocket.onerror = function(e) {console.log("WebSocket error occurred.");};
 websocket.onmessage = function(e) {
