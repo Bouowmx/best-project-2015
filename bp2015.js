@@ -1,4 +1,5 @@
-(function() {var elements = [];
+(function() {
+var elements = [];
 elementsIndexChat = 0;
 var elementEventListeners = [];
 var name = "";
@@ -7,6 +8,7 @@ var intervalRoomsGet = 0;
 var intervalWait = 0;
 var playersMax = 4;
 var roomNumber = -1;
+var players = [];
 var state = "";
 var websocket = new WebSocket("ws://bp2015.themafia.info:9090");
 //The following line and many lines after contain non-printable characters. You will need an editor that can show these characters: https://cloud.githubusercontent.com/assets/5422757/5805445/c669363c-9fdc-11e4-8fe8-a18b743a21d7.png
@@ -32,7 +34,6 @@ websocket.onmessage = function(e) {
 		chat_ = e.data.split("")[1].split("");
 		if (elements[elementsIndexChat].value.split("\n").length == 100) {elements[elementsIndexChat].value = elements[elementsIndexChat].value.slice(0, elements[elementsIndexChat].value.lastIndexOf("\n", elements[elementsIndexChat].value.length - 1));}
 		elements[elementsIndexChat].value = chat_[0] + ": " + chat_[1] + "\n" + elements[elementsIndexChat].value;
-		console.log(elementsIndexChat);
 	} else if (state == "join") {
 		if (e.data != "false") {roomCreate();}
 		else {
@@ -214,10 +215,10 @@ function rooms() {
 	websocket.send("rooms");
 	intervalRoomsGet = setInterval(function() {websocket.send("rooms")}, 1000);
 }
-	     
-		 function stateChange() {
-		     elementsRemoveEventListeners();
-		     documentBodyRemoveElements();
+
+function stateChange() {
+	elementsRemoveEventListeners();
+	documentBodyRemoveElements();
 }
 
 // MAPS.JS ====================================================================
@@ -382,6 +383,7 @@ function initialize() {
 	    window.alert("YOU'RE OUTSIDE NEW YORK")
 	}
     });
+
     ////////////////////////////
     //ADDITIONAL MAP VARIABLES//
     ////////////////////////////
@@ -424,7 +426,7 @@ function initialize() {
 }
 google.maps.event.addDomListener(window, 'load', initialize);
 
-function gameCreate() {
+function gameCreate() {/*
     stateChange();
     createElement(0, "button");
     elements[0].value = "End Turn";
@@ -440,7 +442,8 @@ function gameCreate() {
     elements[4].setAttribute("height", "600");
     elements[4].setAttribute("width", "600");
     documentBodyAppendElements();
-    initialize();
+    initialize();*/
+    window.location = "maps.html";
 }
 
 login();})(); //Create a function that encloses the entire body and run it, so that nothing can be modified through the browser console. 少名　針妙丸

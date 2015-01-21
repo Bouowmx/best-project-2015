@@ -69,6 +69,7 @@ def application(env, start_response):
 		if (msg_type == "leave"):
 			roomNumber = msg_data.split("")[0]
 			name = msg_data.split("")[1]
+			roomNumberChat = -1
 			room = uwsgi.cache_get(roomNumber).split("")
 			i = 1
 			while (i < len(room)):
@@ -81,7 +82,6 @@ def application(env, start_response):
 						roomNumbers.remove(roomNumber)
 						uwsgi.cache_update("roomNumbers", "".join(roomNumbers))
 						uwsgi.cache_del(roomNumber)
-						roomNumberChat = -1
 					break
 				i += 1
 		if (msg_type == "join"):
