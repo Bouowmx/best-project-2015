@@ -313,12 +313,10 @@ function initialize() {
 	new google.maps.LatLng(40.820873, -73.855591),
 	new google.maps.LatLng(40.788909, -73.805122),
 	new google.maps.LatLng(40.747306, -73.754311),
-	new google.maps.LatLng(40.675219, -73.848724)
+	new google.maps.LatLng(40.675219, -73.848724),
+	new google.maps.LatLng(40.784465, -73.846149)
     ]
-
-    var randlat = ((Math.random()*((upperbound - lowerbound)*100000000000000))/100000000000000)+lowerbound
-    var randlng = ((Math.random()*((rightbound - leftboundnosi)*100000000000000))/100000000000000)+leftboundnosi
-    var marker_0 = new google.maps.Marker({position: new google.maps.LatLng(randlat, randlng),map: map, title: "player"});
+    var marker_0 = new google.maps.Marker({position:randomspawns[Math.floor(Math.random()*randomspawns.length)] ,map: map, title: "player"});
     //////////////////////
     //SETTING UP PATHING//
     //////////////////////
