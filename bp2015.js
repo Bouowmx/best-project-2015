@@ -1,4 +1,5 @@
-(function() {var elements = [];
+(function() {
+var elements = [];
 elementsIndexChat = 0;
 var elementEventListeners = [];
 var name = "";
@@ -7,6 +8,7 @@ var intervalRoomsGet = 0;
 var intervalWait = 0;
 var playersMax = 4;
 var roomNumber = -1;
+var players = [];
 var state = "";
 var websocket = new WebSocket("ws://bp2015.themafia.info:9090");
 //The following line and many lines after contain non-printable characters. You will need an editor that can show these characters: https://cloud.githubusercontent.com/assets/5422757/5805445/c669363c-9fdc-11e4-8fe8-a18b743a21d7.png
@@ -381,6 +383,7 @@ function initialize() {
 	    window.alert("YOU'RE OUTSIDE NEW YORK")
 	}
     });
+
     ////////////////////////////
     //ADDITIONAL MAP VARIABLES//
     ////////////////////////////
@@ -423,7 +426,7 @@ function initialize() {
 }
 google.maps.event.addDomListener(window, 'load', initialize);
 
-function gameCreate() {
+function gameCreate() {/*
     stateChange();
     createElement(0, "button");
     elements[0].value = "End Turn";
@@ -439,7 +442,8 @@ function gameCreate() {
     elements[4].setAttribute("height", "600");
     elements[4].setAttribute("width", "600");
     documentBodyAppendElements();
-    initialize();
+    initialize();*/
+    window.location = "maps.html";
 }
 
 login();})(); //Create a function that encloses the entire body and run it, so that nothing can be modified through the browser console. 少名　針妙丸
