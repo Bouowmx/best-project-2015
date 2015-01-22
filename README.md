@@ -8,7 +8,6 @@ Steven Zabolotny
 
 Richard Zhan
 #Instructions
-Do not go to website `bp2015.themafia.info`. You will not see anything useful.
 
 `maps.html` is a demonstration of how a player moves in-game.
 `bp2015.*` is a demonstration of how a player connects to the game. Note: you cannot see maps in `bp2015.html`.
