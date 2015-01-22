@@ -1,4 +1,4 @@
-(function() {
+//function() {
 var elements = [];
 elementsIndexChat = 0;
 var elementEventListeners = [];
@@ -292,9 +292,33 @@ function initialize() {
     ///////////////////////////////////
     //SETTING UP A RANDOM SPAWN POINT//
     ///////////////////////////////////
-    var randlat = ((Math.random()*((upperbound - lowerbound)*100000000000000))/100000000000000)+lowerbound
-    var randlng = ((Math.random()*((rightbound - leftboundnosi)*100000000000000))/100000000000000)+leftboundnosi
-    var marker_0 = new google.maps.Marker({position: new google.maps.LatLng(randlat, randlng),map: map, title: "player"});
+    var randomspawns = [
+	new google.maps.LatLng(40.688343, -73.990517),
+	new google.maps.LatLng(40.618668, -74.008198),
+	new google.maps.LatLng(40.589474, -73.967171),
+	new google.maps.LatLng(40.591429, -73.897648),
+	new google.maps.LatLng(40.585066, -73.816452),
+	new google.maps.LatLng(40.556119, -73.922195),
+	new google.maps.LatLng(40.638235, -73.930435),
+	new google.maps.LatLng(40.684852, -73.837395),
+	new google.maps.LatLng(40.724153, -73.844261),
+	new google.maps.LatLng(40.748086, -73.864174),
+	new google.maps.LatLng(40.789688, -73.884430),
+	new google.maps.LatLng(40.774611, -73.933525),
+	new google.maps.LatLng(40.710101, -74.005280),
+	new google.maps.LatLng(40.731178, -74.002533),
+	new google.maps.LatLng(40.754848, -73.981934),
+	new google.maps.LatLng(40.781890, -73.965454),
+	new google.maps.LatLng(40.807102, -73.942108),
+	new google.maps.LatLng(40.837759, -73.939018),
+	new google.maps.LatLng(40.834382, -73.906059),
+	new google.maps.LatLng(40.820873, -73.855591),
+	new google.maps.LatLng(40.788909, -73.805122),
+	new google.maps.LatLng(40.747306, -73.754311),
+	new google.maps.LatLng(40.675219, -73.848724),
+	new google.maps.LatLng(40.784465, -73.846149)
+    ]
+    var marker_0 = new google.maps.Marker({position:randomspawns[Math.floor(Math.random()*randomspawns.length)] ,map: map, title: "player"});
     //////////////////////
     //SETTING UP PATHING//
     //////////////////////
@@ -426,7 +450,8 @@ function initialize() {
 }
 google.maps.event.addDomListener(window, 'load', initialize);
 
-function gameCreate() {/*
+function gameCreate() {
+    /*Old maps.html
     stateChange();
     createElement(0, "button");
     elements[0].value = "End Turn";
@@ -441,9 +466,44 @@ function gameCreate() {/*
     elements[4].setAttribute("id", "map");
     elements[4].setAttribute("height", "600");
     elements[4].setAttribute("width", "600");
+    chat(5);
     documentBodyAppendElements();
     initialize();*/
-    window.location = "maps.html";
+    stateChange();
+    createElement(0, "div");
+    elementSetAttributes(0, [["class", "pure-g"], ["style", "height: 100%; width: 100%;"]]);
+    createElement(1, "div");
+    elementSetAttributes(1, [["class", "pure-u-4-5"], ["style", "height: 100%; width: 80%;"]]);
+    createElement(2, "div");
+    elementSetAttributes(2, [["id", "map-canvas"]]);
+    createElement(3, "canvas");
+    elementSetAttributes(3, [["id", "map"], ["height", "1"], ["width", "1"]]);
+    createElement(4, "div");
+    elementSetAttributes(4, [["class", "pure-u-1-5"]]);
+    chat(5);
+    //createElement(6, "button");
+    //elements[6].value = "End Turn";
+    createElementAppendTextNode(10, "button", "End Turn");
+    elementSetAttributes(10, [["name", "turn"], ["id", "turn"], ["class", "pure-button"], ["background", "#33E15B"]]);
+    createElementAppendTextNode(11, "p", "Remaining Distance: 3000");
+    elements[11].setAttribute("id", "remdist");
+    createElementAppendTextNode(12, "p", "Current Distance: 0");
+    elements[12].setAttribute("id", "curdist");
+    documentBodyAppendElements();
+    initialize();
+    appendChild(0, 1);
+    appendChild(1, 2);
+    appendChild(1, 3);
+    appendChild(0, 4);
+    appendChild(4, 5);
+    appendChild(4, 10);
+    appendChild(4, 11);
+    appendChild(4, 12);
+    /*stateChange();
+    location.replace("maps.html");
+    chat(0);
+    documentBodyAppendElements();
+    initialize();*/
 }
 
-login();})(); //Create a function that encloses the entire body and run it, so that nothing can be modified through the browser console. 少名　針妙丸
+login();//})(); //Create a function that encloses the entire body and run it, so that nothing can be modified through the browser console. 少名　針妙丸
