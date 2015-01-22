@@ -1,4 +1,4 @@
-(function() {
+//(function() {
 var elements = [];
 elementsIndexChat = 0;
 var elementEventListeners = [];
@@ -316,7 +316,14 @@ function initialize() {
 	new google.maps.LatLng(40.788909, -73.805122),
 	new google.maps.LatLng(40.747306, -73.754311),
 	new google.maps.LatLng(40.675219, -73.848724),
-	new google.maps.LatLng(40.784465, -73.846149)
+	new google.maps.LatLng(40.784465, -73.846149),
+	new google.maps.LatLng(40.679694, -73.914642),
+	new google.maps.LatLng(40.715094, -73.854904),
+	new google.maps.LatLng(40.677091, -73.861771),
+	new google.maps.LatLng(40.745794, -73.867950),
+	new google.maps.LatLng(40.592154, -73.892670),
+	new google.maps.LatLng(40.650006, -73.783493),
+	new google.maps.LatLng(40.773676, -73.869839)
     ]
     var marker_0 = new google.maps.Marker({position:randomspawns[Math.floor(Math.random()*randomspawns.length)] ,map: map, title: "player"});
     //////////////////////
@@ -470,4 +477,4 @@ function gameCreate() {/*
     window.location = "maps.html";
 }
 
-login();})(); //Create a function that encloses the entire body and run it, so that nothing can be modified through the browser console. 少名　針妙丸
+login();//})(); //Create a function that encloses the entire body and run it, so that nothing can be modified through the browser console. 少名　針妙丸
