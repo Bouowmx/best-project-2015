@@ -1,5 +1,4 @@
-//(function() {
-var elements = [];
+/*(function() {*/var elements = [];
 elementsIndexChat = 0;
 var elementEventListeners = [];
 var name = "";
