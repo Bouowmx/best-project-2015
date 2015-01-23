@@ -1,4 +1,5 @@
 /*(function() {*/var elements = [];
+var elements = [];
 elementsIndexChat = 0;
 var elementEventListeners = [];
 var name = "";
@@ -462,7 +463,8 @@ function initialize() {
 }
 google.maps.event.addDomListener(window, 'load', initialize);
 
-function gameCreate() {/*
+function gameCreate() {
+    /*Old maps.html
     stateChange();
     createElement(0, "button");
     elements[0].value = "End Turn";
@@ -477,9 +479,50 @@ function gameCreate() {/*
     elements[4].setAttribute("id", "map");
     elements[4].setAttribute("height", "600");
     elements[4].setAttribute("width", "600");
+    chat(5);
     documentBodyAppendElements();
     initialize();*/
-    window.location = "maps.html";
+    stateChange();
+    createElement(0, "div");
+    elementSetAttributes(0, [["class", "pure-g"], ["style", "height: 100%; width: 100%;"]]);
+    createElement(1, "div");
+    elementSetAttributes(1, [["class", "pure-u-4-5"], ["style", "height: 100%; width: 80%;"]]);
+    createElement(2, "div");
+    elementSetAttributes(2, [["id", "map-canvas"]]);
+    createElement(3, "canvas");
+    elementSetAttributes(3, [["id", "map"], ["height", "1"], ["width", "1"]]);
+    createElement(4, "div");
+    elementSetAttributes(4, [["class", "pure-u-1-5"]]);
+    chat(5);
+    //createElement(6, "button");
+    //elements[6].value = "End Turn";
+    createElementAppendTextNode(11, "button", "End Turn");
+    elementSetAttributes(11, [["name", "turn"], ["id", "turn"], ["class", "pure-button"]]);
+    createElementAppendTextNode(12, "p", "Remaining Distance: 3000");
+    elements[12].setAttribute("id", "remdist");
+    createElementAppendTextNode(13, "p", "Current Distance: 0");
+    elements[13].setAttribute("id", "curdist");
+    appendChild(0, 1);
+    appendChild(1, 2);
+    appendChild(1, 3);
+    appendChild(0, 4);
+    appendChild(4, 5);
+    appendChild(4, 6);
+    appendChild(4, 7);
+    appendChild(4, 8);
+    appendChild(4, 9);
+    appendChild(4, 10);
+    appendChild(4, 11);
+    appendChild(4, 12);
+    appendChild(4, 13);
+    documentBodyAppendElements([0]);
+    initialize();
+    //documentBodyAppendElements();
+    /*stateChange();
+    location.replace("maps.html");
+    chat(0);
+    documentBodyAppendElements();
+    initialize();*/
 }
 
 login();//})(); //Create a function that encloses the entire body and run it, so that nothing can be modified through the browser console. 少名　針妙丸
