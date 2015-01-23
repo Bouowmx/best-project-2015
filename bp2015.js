@@ -13,7 +13,7 @@ var websocket = new WebSocket("ws://bp2015.themafia.info:9090");
 //The following line and many lines after contain non-printable characters. You will need an editor that can show these characters: https://cloud.githubusercontent.com/assets/5422757/5805445/c669363c-9fdc-11e4-8fe8-a18b743a21d7.png
 window.onbeforeunload = function(e) {websocket.send("close" + roomNumber + "" + name);};
 websocket.onclose = function(e) {
-	console.log("WebSocket connection closed: " + e.code);
+	console.log("Disconnected. WebSocket connection closed: " + e.code);
 	clearInterval(intervalPingPong);
 	clearInterval(intervalRoomsGet);
 	clearInterval(intervalWait);
@@ -24,8 +24,7 @@ websocket.onclose = function(e) {
 		elementsRemoveEventListeners();
 		elementEventListeners = [];
 	}
-	alert("Disconnected.");
-};
+}
 websocket.onerror = function(e) {console.log("WebSocket error occurred.");};
 websocket.onmessage = function(e) {
 	console.log("received: " + JSON.stringify(e.data));
@@ -53,7 +52,7 @@ websocket.onmessage = function(e) {
 			if (i == rooms_.length) {rooms_ = [];}
 		}
 		for (var i = 0; i < rooms_.length; i++) {
-			var index = 13 + 4 * i;
+			var index = 15 + 4 * i;
 			var playerCount = 0;
 			var room = rooms_[i].split("");
 			for (var j = 2; j < room.length; j++) {if (room[j].split("")[0]) {playerCount++;}}
@@ -69,17 +68,18 @@ websocket.onmessage = function(e) {
 				createElementAddEventListener(index + 3, "input", "click", roomJoin);
 				elementSetAttributes(index + 3, [["type", "button"], ["value", "Join"]]);
 				appendChild(index, index + 3);
-				appendChild(8, index);
+				appendChild(10, index);
 			}
 		}
-		for (var i = 13 + 4 * rooms_.length; i < elements.length; i += 4) {removeChild(8, i);}
-		elements.splice(13 + 4 * rooms_.length, elements.length - (13 + 4 * rooms_.length));
+		for (var i = 15 + 4 * rooms_.length; i < elements.length; i += 4) {removeChild(10, i);}
+		elements.splice(15 + 4 * rooms_.length, elements.length - (15 + 4 * rooms_.length));
 	} else if (state == "wait") {
 		var room = e.data.split("");
 		if (room == "ready") {
 			clearInterval(intervalWait);
 		    //Go to game
 		    state = "ingame";
+			gameCreate();
 		}
 		else {for (var i = 0; i < playersMax; i++) {elementReplaceTextNode(10 + i, "Player " + (i + 1) + ": " + room[1 + i].split("")[0]);}}
 	} else if (state == "waitRoomNumber") {
@@ -88,9 +88,9 @@ websocket.onmessage = function(e) {
 			roomCreate();
 		}
 		else {alert("Cannot create room: maximum number of rooms has been reached.");}
-	} else if (state == "ingame") {
+	}/* else if (state == "ingame") {
 	    gameCreate();
-	}
+	}*/
 };
 websocket.onopen = function(e) {
 	console.log("WebSocket connection opened.");
@@ -111,7 +111,7 @@ function chat(index) {
 		elementSetAttributes(elementsIndexChat + 2, [["value", ""]]);
 	});
 	elementSetAttributes(elementsIndexChat + 4, [["type", "submit"]]);
-	createElementAddEventListener(elementsIndexChat + 2, "input", "keypress", function(e) {if (e.which == 13) {elementEventListeners[5][0][1](e);}});
+	createElementAddEventListener(elementsIndexChat + 2, "input", "keypress", function(e) {if (e.which == 13) {elementEventListeners[elementsIndexChat + 4][0][1](e);}});
 	elementSetAttributes(elementsIndexChat + 2, [["maxLength", 100], ["size", 100]]);
 	createElement(elementsIndexChat + 5, "br");
 }
@@ -192,25 +192,31 @@ function rooms() {
 	state = "rooms";
 	stateChange();
 	roomNumber = -1;
-	createElementAppendTextNode(0, "div", "Welcome " + name);
-	chat(1);
-	createElementAddEventListener(7, "input", "click", function(e) {
+	createElementAddEventListener(0, "input", "click", function(e) {
+		location.reload();
+		login();
+	});
+	elementSetAttributes(0, [["type", "button"], ["value", "Exit"]]);
+	createElement(1, "br");
+	createElementAppendTextNode(2, "div", "Welcome " + name);
+	chat(3);
+	createElementAddEventListener(9, "input", "click", function(e) {
 		state = "waitRoomNumber";
 		clearInterval(intervalRoomsGet);
 		stateChange();
 		websocket.send("roomCreate" + name);
 	});
-	elementSetAttributes(7, [["type", "button"], ["value", "Create Room"]]);
-	createElement(8, "table");
-	createElement(9, "tr");
-	createElementAppendTextNode(10, "th", "#");
-	appendChild(9, 10);
-	createElementAppendTextNode(11, "th", "Players");
-	appendChild(9, 11);
-	createElementAppendTextNode(12, "th", "Join");
-	appendChild(9, 12);
-	appendChild(8, 9);
-	documentBodyAppendElements([0, 1, 2, 3, 4, 5, 6, 7, 8]);
+	elementSetAttributes(9, [["type", "button"], ["value", "Create Room"]]);
+	createElement(10, "table");
+	createElement(11, "tr");
+	createElementAppendTextNode(12, "th", "#");
+	appendChild(11, 12);
+	createElementAppendTextNode(13, "th", "Players");
+	appendChild(11, 13);
+	createElementAppendTextNode(14, "th", "Join");
+	appendChild(11, 14);
+	appendChild(10, 11);
+	documentBodyAppendElements([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
 	websocket.send("rooms");
 	intervalRoomsGet = setInterval(function() {websocket.send("rooms")}, 1000);
 }

@@ -18,7 +18,7 @@ def application(env, start_response):
 	if (not uwsgi.cache_exists("11")):
 		uwsgi.cache_update("11", "3Sakuya11Remilia22Flandre33Letty44")
 	if (not uwsgi.cache_exists("12")):
-		uwsgi.cache_update("12", "0Chen")
+		uwsgi.cache_update("12", "0Chen11Alice22Lily33")
 	playersMax = 4
 	nameChat = ""
 	roomsMax = 100
@@ -137,6 +137,13 @@ def application(env, start_response):
 			uwsgi.websocket_send("".join(rooms))
 		if (msg_type == "wait"):
 			uwsgi.websocket_send(uwsgi.cache_get(msg_data.split("")[0]))
+			room = uwsgi.cache_get(msg_data.split("")[0]).split("")
+			room = [player.split("") for player in room]
+			for player in room[1:]:
+				if (not player[0]):
+					break
+			else:
+				uwsgi.websocket_send("ready")
 		chats = uwsgi.cache_get("chats")
 		chats = chats.split("")
 		i = 0
