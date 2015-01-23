@@ -79,6 +79,7 @@ websocket.onmessage = function(e) {
 			clearInterval(intervalWait);
 		    //Go to game
 		    state = "ingame";
+			gameCreate();
 		}
 		else {for (var i = 0; i < playersMax; i++) {elementReplaceTextNode(10 + i, "Player " + (i + 1) + ": " + room[1 + i].split("")[0]);}}
 	} else if (state == "waitRoomNumber") {
@@ -87,9 +88,9 @@ websocket.onmessage = function(e) {
 			roomCreate();
 		}
 		else {alert("Cannot create room: maximum number of rooms has been reached.");}
-	} else if (state == "ingame") {
+	}/* else if (state == "ingame") {
 	    gameCreate();
-	}
+	}*/
 };
 websocket.onopen = function(e) {
 	console.log("WebSocket connection opened.");
