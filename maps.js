@@ -30,9 +30,6 @@ function findPos(obj) {
     return undefined;
 }
 function initialize() {
-    removemax();
-
-
     var canvas = document.getElementById("map");
     var context = canvas.getContext('2d');
     var imageObj = new Image();
@@ -40,6 +37,7 @@ function initialize() {
 	context.drawImage(imageObj,0,0);
     };
     imageObj.crossOrigin='http://maps.googleapis.com/crossdomain.xml';
+
     imageObj.src ="https://maps.googleapis.com/maps/api/staticmap?center=40.6772917298741,-73.89129638671875&zoom=13&size=1x1&key=AIzaSyAYeVRIphkYn8LRtRn-i2rQo2lzdTVb7DE&style=feature:water|color:0xABCBFD";
     
     var lowerbound = 40.53898024667195;
@@ -53,18 +51,43 @@ function initialize() {
     //////////////////////
     var map = new google.maps.Map(document.getElementById('map-canvas'), {center: {lat: 40.7819, lng: -73.8883}, zoom: 10});
 
-
+    ///////////////////////////////////
+    //THIS MAKES A RANDOM SPAWN POINT//
+    ///////////////////////////////////
+    var randomspawns = [
+	new google.maps.LatLng(40.688343, -73.990517),
+	new google.maps.LatLng(40.618668, -74.008198),
+	new google.maps.LatLng(40.589474, -73.967171),
+	new google.maps.LatLng(40.591429, -73.897648),
+	new google.maps.LatLng(40.585066, -73.816452),
+	new google.maps.LatLng(40.556119, -73.922195),
+	new google.maps.LatLng(40.638235, -73.930435),
+	new google.maps.LatLng(40.684852, -73.837395),
+	new google.maps.LatLng(40.724153, -73.844261),
+	new google.maps.LatLng(40.748086, -73.864174),
+	new google.maps.LatLng(40.789688, -73.884430),
+	new google.maps.LatLng(40.774611, -73.933525),
+	new google.maps.LatLng(40.710101, -74.005280),
+	new google.maps.LatLng(40.731178, -74.002533),
+	new google.maps.LatLng(40.754848, -73.981934),
+	new google.maps.LatLng(40.781890, -73.965454),
+	new google.maps.LatLng(40.807102, -73.942108),
+	new google.maps.LatLng(40.837759, -73.939018),
+	new google.maps.LatLng(40.834382, -73.906059),
+	new google.maps.LatLng(40.820873, -73.855591),
+	new google.maps.LatLng(40.788909, -73.805122),
+	new google.maps.LatLng(40.747306, -73.754311),
+	new google.maps.LatLng(40.675219, -73.848724)
+    ]
     /////////////////////////////////
     //SETTING UP RANDOM SPAWN POINT//
     /////////////////////////////////
-    var randlat = ((Math.random()*((upperbound - lowerbound)*100000000000000))/100000000000000)+lowerbound
-    var randlng = ((Math.random()*((rightbound - leftboundnosi)*100000000000000))/100000000000000)+leftboundnosi
-    var marker_0 = new google.maps.Marker({position: new google.maps.LatLng(randlat, randlng),map: map, title: "player"});
+    
+    var marker_0 = new google.maps.Marker({position: Math.floor(Math.random()*randomspawns.length),map: map, title: "player"});
 
     //////////////////////
     //SETTING UP PATHING//
-    //////////////////////
-    
+    //////////////////////    
     var directionsService = new google.maps.DirectionsService();
     var directionsDisplay = new google.maps.DirectionsRenderer();
     directionsDisplay.setOptions({preserveViewport:true,
