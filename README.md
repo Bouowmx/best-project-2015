@@ -9,10 +9,10 @@ Steven Zabolotny
 Richard Zhan
 #Instructions
 
-`maps.html` is a demonstration of how a player moves in-game.
-`bp2015.*` is a demonstration of how a player connects to the game. Note: you cannot see maps in `bp2015.html`.
+`maps.*` is a demonstration of how a player moves in-game.
+`bp2015.*` is a demonstration of how a player connects to the game.
 
-(the server may not be on (check console)/the specific web browser may not support
+If you visit the website and cannot submit a name, check your browser console; the server is most likely offline.
 
 #To-do
 ###Map
