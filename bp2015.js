@@ -1,6 +1,5 @@
 /*(function() {*/var elements = [];
-var elements = [];
-elementsIndexChat = 0;
+var elementsIndexChat = 0;
 var elementEventListeners = [];
 var name = "";
 var intervalPingPong = 0
@@ -25,7 +24,7 @@ websocket.onclose = function(e) {
 		elementsRemoveEventListeners();
 		elementEventListeners = [];
 	}
-}
+};
 websocket.onerror = function(e) {console.log("WebSocket error occurred.");};
 websocket.onmessage = function(e) {
 	console.log("received: " + JSON.stringify(e.data));
@@ -63,16 +62,14 @@ websocket.onmessage = function(e) {
 			} else {
 				createElement(index, "tr");
 				createElementAppendTextNode(index + 1, "td", room[0]);
-				appendChild(index, index + 1);
 				createElementAppendTextNode(index + 2, "td", playerCount + "/" + playersMax);
-				appendChild(index, index + 2);
 				createElementAddEventListener(index + 3, "input", "click", roomJoin);
 				elementSetAttributes(index + 3, [["type", "button"], ["value", "Join"]]);
-				appendChild(index, index + 3);
-				appendChild(10, index);
+				elementAppendChildren(index, [index + 1, index + 2, index + 3]);
+				elementAppendChildren(10, [index]);
 			}
 		}
-		for (var i = 15 + 4 * rooms_.length; i < elements.length; i += 4) {removeChild(10, i);}
+		for (var i = 15 + 4 * rooms_.length; i < elements.length; i += 4) {elementRemoveChild(10, i);}
 		elements.splice(15 + 4 * rooms_.length, elements.length - (15 + 4 * rooms_.length));
 	} else if (state == "wait") {
 		var room = e.data.split("");
@@ -97,8 +94,6 @@ websocket.onopen = function(e) {
 	console.log("WebSocket connection opened.");
 	intervalPingPong = setInterval(function() {websocket.send("");}, 100);
 };
-
-function appendChild(parent, child) {elements[parent].appendChild(elements[child]);}
 
 function chat(index) {
 	elementsIndexChat = index;
@@ -141,8 +136,11 @@ function elementAddEventListener(index, event, eventListener) {
 	else {elementEventListeners[index] = [[event, eventListener]];}
 	elements[index].addEventListener(event, eventListener);
 }
+function elementAppendChildren(parent, children) {for (var i = 0; i < children.length; i++) {elements[parent].appendChild(elements[children[i]]);}}
 function elementSetAttributes(index, attributes) {for (var i = 0; i < attributes.length; i++) {elements[index][attributes[i][0]] = attributes[i][1];}}
+function elementSetStyle(index, style) {for (var i = 0; i < style.length; i++) {elements[index]["style"][style[i][0]] = style[i][1];}}
 function elementReplaceTextNode(index, text) {elements[index].replaceChild(document.createTextNode(text), elements[index].firstChild);}
+function elementRemoveChild(parent, child) {elements[parent].removeChild(elements[child]);}
 
 function elementsRemoveEventListeners() {for (var i = 0; i < elements.length; i++) {if (elementEventListeners[i]) {for (var j = 0; j < elementEventListeners[i].length; j++) {elements[i].removeEventListener(elementEventListeners[i][j][0], elementEventListeners[i][j][1]);}}}}
 
@@ -160,8 +158,6 @@ function login() {
 	document.getElementById("submit").addEventListener(elementEventListeners[1][0][0], elementEventListeners[1][0][1]);
 	document.getElementById("name").focus();
 }
-
-function removeChild(parent, child) {elements[parent].removeChild(elements[child]);}
 
 function roomCreate() {
 	state = "wait";
@@ -211,12 +207,10 @@ function rooms() {
 	createElement(10, "table");
 	createElement(11, "tr");
 	createElementAppendTextNode(12, "th", "#");
-	appendChild(11, 12);
 	createElementAppendTextNode(13, "th", "Players");
-	appendChild(11, 13);
 	createElementAppendTextNode(14, "th", "Join");
-	appendChild(11, 14);
-	appendChild(10, 11);
+	elementAppendChildren(11, [12, 13, 14]);
+	elementAppendChildren(10, [11]);
 	documentBodyAppendElements([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
 	websocket.send("rooms");
 	intervalRoomsGet = setInterval(function() {websocket.send("rooms")}, 1000);
@@ -464,65 +458,35 @@ function initialize() {
 google.maps.event.addDomListener(window, 'load', initialize);
 
 function gameCreate() {
-    /*Old maps.html
-    stateChange();
-    createElement(0, "button");
-    elements[0].value = "End Turn";
-    elements[0].setAttribute("name", "turn");
-    createElementAppendTextNode(1, "p", "Remaining Distance: 3000");
-    elements[1].setAttribute("id", "remdist");
-    createElementAppendTextNode(2, "p", "Current Distance: 0");
-    elements[2].setAttribute("id", "curdist");
-    createElement(3, "div");
-    elements[3].setAttribute("id", "map-canvas");
-    createElement(4, "canvas");
-    elements[4].setAttribute("id", "map");
-    elements[4].setAttribute("height", "600");
-    elements[4].setAttribute("width", "600");
-    chat(5);
-    documentBodyAppendElements();
-    initialize();*/
     stateChange();
     createElement(0, "div");
-    elementSetAttributes(0, [["class", "pure-g"], ["style", "height: 100%; width: 100%;"]]);
+    elementSetAttributes(0, [["className", "pure-g"]]);
+	//elementSetStyle(0, [["height", "100%"], ["width", "100%"]]);
     createElement(1, "div");
-    elementSetAttributes(1, [["class", "pure-u-4-5"], ["style", "height: 100%; width: 80%;"]]);
+    elementSetAttributes(1, [["className", "pure-u-4-5"]]);
+	elementSetStyle(1, [["height", "100%"]/*, ["width", "100%"]*/]);
     createElement(2, "div");
     elementSetAttributes(2, [["id", "map-canvas"]]);
     createElement(3, "canvas");
     elementSetAttributes(3, [["id", "map"], ["height", "1"], ["width", "1"]]);
     createElement(4, "div");
-    elementSetAttributes(4, [["class", "pure-u-1-5"]]);
+    elementSetAttributes(4, [["className", "pure-u-1-5"]]);
     chat(5);
-    //createElement(6, "button");
-    //elements[6].value = "End Turn";
     createElementAppendTextNode(11, "button", "End Turn");
-    elementSetAttributes(11, [["name", "turn"], ["id", "turn"], ["class", "pure-button"]]);
+    elementSetAttributes(11, [["name", "turn"], ["id", "turn"], ["className", "pure-button"]]);
     createElementAppendTextNode(12, "p", "Remaining Distance: 3000");
     elements[12].setAttribute("id", "remdist");
     createElementAppendTextNode(13, "p", "Current Distance: 0");
     elements[13].setAttribute("id", "curdist");
-    appendChild(0, 1);
-    appendChild(1, 2);
-    appendChild(1, 3);
-    appendChild(0, 4);
-    appendChild(4, 5);
-    appendChild(4, 6);
-    appendChild(4, 7);
-    appendChild(4, 8);
-    appendChild(4, 9);
-    appendChild(4, 10);
-    appendChild(4, 11);
-    appendChild(4, 12);
-    appendChild(4, 13);
+	elementAppendChildren(0, [1, 4]);
+	elementAppendChildren(1, [2, 3]);
+	elementAppendChildren(4, [5, 6, 7, 8, 9, 10, 11, 12, 13]);
     documentBodyAppendElements([0]);
     initialize();
-    //documentBodyAppendElements();
-    /*stateChange();
     location.replace("maps.html");
     chat(0);
     documentBodyAppendElements();
-    initialize();*/
+    initialize();
 }
 
 login();//})(); //Create a function that encloses the entire body and run it, so that nothing can be modified through the browser console. 少名　針妙丸
