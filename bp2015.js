@@ -461,10 +461,9 @@ function gameCreate() {
     stateChange();
     createElement(0, "div");
     elementSetAttributes(0, [["className", "pure-g"]]);
-	//elementSetStyle(0, [["height", "100%"], ["width", "100%"]]);
     createElement(1, "div");
     elementSetAttributes(1, [["className", "pure-u-4-5"]]);
-	elementSetStyle(1, [["height", "100%"]/*, ["width", "100%"]*/]);
+	elementSetStyle(1, [["height", "100%"]]);
     createElement(2, "div");
     elementSetAttributes(2, [["id", "map-canvas"]]);
     createElement(3, "canvas");
