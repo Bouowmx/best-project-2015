@@ -3,7 +3,7 @@ best-project-2015
 Authors (alphabetical): Albert Yeung, Richard Zhan, Sean Yip, Steven Zabolotny
 #Instructions
 
-Visit bp2015.themafia.info.
+Go to [bp2015.themafia.info](bp2015.themafia.info).
 
 If the website is or becomes unresponsive, check your browser console; the server is most likely offline.
 
