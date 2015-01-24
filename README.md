@@ -9,12 +9,10 @@ Steven Zabolotny
 Richard Zhan
 #Instructions
 
-`maps.html` is a demonstration of how a player moves in-game.
-`bp2015.*` is a demonstration of how a player connects to the game. Note: you cannot see maps in `bp2015.html`.
+`maps.*` is a demonstration of how a player moves in-game.
+`bp2015.*` is a demonstration of how a player connects to the game.
 
-Running `bp2015.*` requires `uwsgi`. Install in Debian-based systems using `sudo apt-get install uwsgi`. In `bp2015.js`, change `ws://bp2015.themafia.info:9090` to `ws://<your server domain or server IP address>:9090` (not your local IP address but Digital Ocean) since you cannot log in to `bp2015.themafia.info` to start the server.
-
-To start server, change to project direactory and run `./bp2015.sh`
+If you visit the website and cannot submit a name, check your browser console; the server is most likely offline.
 
 #To-do
 ###Map
@@ -29,8 +27,8 @@ To start server, change to project direactory and run `./bp2015.sh`
 ###Interface
 * A website [Done]
 * Rooms [Done]
-* Lobby
-* Temporary Username
+* Lobby [Done]
+* Temporary Username [Done]
 * A chat box
 
 ###Game
