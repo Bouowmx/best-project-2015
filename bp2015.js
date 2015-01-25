@@ -370,11 +370,11 @@ function rooms() {
     elementAppendChildren(10, [11]);
     //---css---
     createElement(15, "div");
-    elementSetAttribute(15,[["className","pure-g"]]);
+    elementSetAttributes(15,[["className","pure-g"]]);
     createElement(16, "div");
-    elementSetAttribute(16,[["className","pure-u-4-5"]]);
+    elementSetAttributes(16,[["className","pure-u-4-5"]]);
     createElement(17, "div");
-    elementSetAtrribute(17,[["className","pure-u-1-5"]]);
+    elementSetAtrributes(17,[["className","pure-u-1-5"]]);
     elementAppendChildren(16,[3,4,5,6,7,8]);
     elementAppendChildren(17,[9,10]);
     elementAppendChildren(15,[16,17]);
