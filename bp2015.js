@@ -353,8 +353,7 @@ function rooms() {
     elementSetAttributes(1,[["className","pure-u-4-5"]]);
     elementSetStyle(1,[["height","100%"]]);
 
-
-    createElementAppendTextNode(2, "div", "Welcome " + name);
+    createElementAppendTextNode(2, "h1", "Welcome " + name);
     chat(3);
     createElement(9, "br");
     createElementAddEventListener(10, "input", "click", function(e) {
