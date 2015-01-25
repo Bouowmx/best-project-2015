@@ -1,18 +1,11 @@
 best-project-2015
 =================
-Albert Yeung
-
-Sean Yip
-
-Steven Zabolotny
-
-Richard Zhan
+Authors (alphabetical): Albert Yeung, Richard Zhan, Sean Yip, Steven Zabolotny
 #Instructions
 
-`maps.*` is a demonstration of how a player moves in-game.
-`bp2015.*` is a demonstration of how a player connects to the game.
+Go to [http://bp2015.themafia.info](http://bp2015.themafia.info).
 
-If you visit the website and cannot submit a name, check your browser console; the server is most likely offline.
+If the website is or becomes unresponsive, check your browser console; the server is most likely offline.
 
 #To-do
 ###Map

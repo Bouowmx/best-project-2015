@@ -10,7 +10,7 @@
 <style>
 	* {font-family: Verdana, sans-serif}
 	#instructbg {background-color: #A1A1A1; opacity: 0.85; padding: 10px; position: relative; z-index: 3;}
-  	#instructions { font-size: 24px !important; }
+	#instructions { font-size: 24px !important; }
 	#turn {background: #33E15B;}
 	.map {height: 100%; width: 100%}
 	.side {height: 100%; width: 80%;}
@@ -24,70 +24,63 @@
 </style>
 <title>BP2015</title>
 <body>
-  <div class="container">
-    <div class="content"> 
-      <div class="pure-g">
-	<div class="pure-u-1-5"></div>
-	<div class="pure-u-3-5">
-	  <center><h1>Welcome to Best Project 2015</h1>
-	    <p style="font-size: 24px">Enter the name you will use:</p>
-	    <input id="name" type="text" style="height: 24px; font-size: 24px">
-	    <!--UNCOMMENT THE BELOW LINE AND DELETE THE PURE BUTTON IF IT BREAKS-->
-	    <!--<input id="submit" type="submit">-->
-	    <button class="pure-button pure-button-primary" id="submit">Submit</button>
-	  </center>
-	  <hr>
-	  <div id="instructbg">
-	    <p id="instructions">
-	      <b>
-		<center>Instructions:</center><br><br>
-		1. Enter a name and hit submit.<br><br>
-		2. Join a room with other players or create a room and wait for the match to begin!<br><br>
-		3. Move 3000 meters around NYC during day. Movement is based on the streets you drive.<br><br>
-		4. Hit end turn. This will refresh your movement and change the time from day to night or vice versa.<br><br>
-		The killer strikes at night!<br><br>
-		The cop arrests at night<br><br>
-		5. The game ends when either all killers are arrested or all innocents.<br>
-	      </b>
-	    </p><br><hr>
-	    <center><h1>WHO ARE YOU?</h1></center>
-	    <div class="pure-g" style="font-size: 18px;">
-		<div class="pure-u-1-3">
-		  <center><img src="static/NYPD.png">
-		  <br>Find and arrest the killer</center>
+<div class="container">
+	<div class="content"> 
+		<div class="pure-g">
+			<div class="pure-u-1-5"></div>
+			<div class="pure-u-3-5">
+				<center>
+					<h1>Welcome to Best Project 2015</h1>
+					<p style="font-size: 24px">Enter the name you will use:</p>
+					<input id="name" type="text" style="height: 24px; font-size: 24px">
+					<button class="pure-button pure-button-primary" id="submit">Submit</button>
+				</center>
+				<hr>
+				<div id="instructbg">
+					<p id="instructions"><b>
+						<center>Instructions:</center><br><br>
+						1. Enter a name and hit submit.<br><br>
+						2. Join a room with other players or create a room and wait for the match to begin!<br><br>
+						3. Move 3000 meters around NYC during day. Movement is based on the streets you drive.<br><br>
+						4. Hit end turn. This will refresh your movement and change the time from day to night or vice versa.<br><br>
+						The killer strikes at night!<br><br>
+						The cop arrests at night<br><br>
+						5. The game ends when either all killers are arrested or all innocents.<br>
+					</b></p><br>
+					<hr>
+					<center><h1>WHO ARE YOU?</h1></center>
+					<div class="pure-g" style="font-size: 18px;">
+						<div class="pure-u-1-3"><center>
+							<img src="static/NYPD.png"><br>
+							Find and arrest the killer
+						</center></div>
+						<div class="pure-u-1-3"><center>
+							<img src="static/Mafia.png"><br>
+							Deceive and kill
+						</center></div>
+						<div class="pure-u-1-3"><center>
+							<img src="static/inno.png"><br>
+							Try not to die or be arrested
+						</center></div>
+					</div>
+				</div>
+				<div id="disqus_thread"></div>
+				<script>
+					var disqus_category_id = 3464837;
+					var disqus_identifier = "113641204971115";
+					var disqus_shortname = "googlekiller";
+					var disqus_title = "BP2015";
+					var disqus_url = "http://bp2015.themafia.info";
+					(function() {var dsq = document.createElement("script");
+					dsq.src = "//" + disqus_shortname + ".disqus.com/embed.js";
+					document.body.appendChild(dsq);})();
+				</script>
+				<a href="https://github.com/Bouowmx/best-project-2015">Source code on GitHub</a><br>
+				Authors (alphabetical): Albert Yeung, Richard Zhan, Sean Yip, Steven Zabolotny
+			</div>
+			<div class="pure-u-1-5"></div>
 		</div>
-		<div class="pure-u-1-3">
-		  <center><img src="static/Mafia.png">
-		<br>Deceive and kill</center>
-		</div>
-		<div class="pure-u-1-3">
-	      	  <center><img src="static/inno.png">
-		  <br>Try not to die or be arrested</center>
-		</div>
-	      
-	    </div>
-	  </div>
-	  <div id="disqus_thread"></div>
-	  <script type="text/javascript">
-	    var disqus_shortname = 'googlekiller';
-	    var disqus_identifier = '113641204971115';
-	    var disqus_title = 'BP2015';
-	    var disqus_url = 'http://bp2015.themafia.info';
-	    var disqus_category_id = 3464837;
-	    
-	    (function() {
-	    var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
-	    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
-	    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
-	    })();
-	  </script>
-	  <a href="https://github.com/Bouowmx/best-project-2015">Source code on GitHub</a><br>
-	  <br>Sean Yip, Albert Yeung, Steven Zabolotny, Richard Zhan &#169;
-
 	</div>
-	<div class="pure-u-1-5"></div>
-      </div>
-    </div>
-  </div>
+</div>
 </body>
 </html>
