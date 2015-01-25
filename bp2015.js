@@ -254,14 +254,14 @@ function initialize() {
 		lat = e.latLng.lat();
 		lng = e.latLng.lng();
 		if ((upperbound > lat) && (lowerbound < lat) && (leftboundnosi < lng) && (rightbound > lng)) {
-			if (curdist <= remdist && $("#turn")[0].className == "button-success pure-button") {//Test movement left
+			if ((curdist <= remdist) && ($("#turn")[0].className == "pure-button")) {//Test movement left
 			//Test water
 			imageObj.src = "https://maps.googleapis.com/maps/api/staticmap?center=" + lat + "," + lng + "&zoom=32&size=1x1&key=AIzaSyAYeVRIphkYn8LRtRn-i2rQo2lzdTVb7DE&style=feature:water|color:0xABCBFD";
 			$(imageObj).load(function() {
 				var pos = findPos($("#map"));
 				var c = $("#map")[0].getContext("2d");
 				var p = c.getImageData(0, 0, 1, 1).data;
-				if (!((p[0] > 169) && (p[0] < 175) && (p[1] > 199) && (p[1] < 215) && (p[2] > 249))){
+				if (!((p[0] > 169) && (p[0] < 175) && (p[1] > 199) && (p[1] < 215) && (p[2] > 249))) {
 					//Actually placing the player
 					remdist = remdist - curdist;
 					document.getElementById("remdist").innerHTML = "Remaining Distance: " + remdist;			
