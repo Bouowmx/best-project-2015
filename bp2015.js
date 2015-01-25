@@ -343,34 +343,52 @@ function roomJoin(e) {
 }
 
 function rooms() {
-	state = "rooms";
+    state = "rooms";
+    stateChange();
+    roomNumber = -1;
+    createElement(0, "div");
+    elementSetAttributes(0,[["className","pure-g"]]);
+    elementSetStyle(0,[["height","100%"]]);
+    createElement(1, "div");
+    elementSetAttributes(1,[["className","pure-u-4-5"]]);
+    elementSetStyle(1,[["height","100%"]]);
+
+    createElementAppendTextNode(2, "h1", "Welcome " + name);
+    chat(3);
+    createElement(9, "br");
+    createElementAddEventListener(10, "input", "click", function(e) {
+	location.reload();
+	login();
+    });
+
+
+
+    elementSetAttributes(10, [["type", "button"], ["id","Exit"],["value", "Exit"]]);
+    createElement(11, "div");
+    elementSetAttributes(11,[["className","pure-u-1-5"]]);
+    elementSetStyle(11,[["height","100%"]]);
+
+    createElementAddEventListener(12, "input", "click", function(e) {
+	state = "waitRoomNumber";
+	clearInterval(intervalRoomsGet);
 	stateChange();
-	roomNumber = -1;
-	createElementAddEventListener(0, "input", "click", function(e) {
-		location.reload();
-		login();
-	});
-	elementSetAttributes(0, [["type", "button"], ["value", "Exit"]]);
-	createElement(1, "br");
-	createElementAppendTextNode(2, "div", "Welcome " + name);
-	chat(3);
-	createElementAddEventListener(9, "input", "click", function(e) {
-		state = "waitRoomNumber";
-		clearInterval(intervalRoomsGet);
-		stateChange();
-		websocket.send("roomCreate" + name);
-	});
-	elementSetAttributes(9, [["type", "button"], ["value", "Create Room"]]);
-	createElement(10, "table");
-	createElement(11, "tr");
-	createElementAppendTextNode(12, "th", "#");
-	createElementAppendTextNode(13, "th", "Players");
-	createElementAppendTextNode(14, "th", "Join");
-	elementAppendChildren(11, [12, 13, 14]);
-	elementAppendChildren(10, [11]);
-	documentBodyAppendElements([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
-	websocket.send("rooms");
-	intervalRoomsGet = setInterval(function() {websocket.send("rooms")}, 1000);
+	websocket.send("roomCreate" + name);
+    });
+    elementSetAttributes(12, [["type", "button"],["id","Create"], ["value", "Create Room"]]);
+    createElement(13, "table");
+    createElement(14, "tr");
+    createElementAppendTextNode(15, "th", "#");
+    createElementAppendTextNode(16, "th", "Players");
+    createElementAppendTextNode(17, "th", "Join");
+    elementAppendChildren(14, [15, 16, 17]);
+    elementAppendChildren(13, [14]);
+    //---css---
+    elementAppendChildren(1,[2,3,4,5,6,7,8,9,10]);
+    elementAppendChildren(11,[12,13]);
+    elementAppendChildren(0,[1,11]);
+    documentBodyAppendElements([0]);
+    websocket.send("rooms");
+    intervalRoomsGet = setInterval(function() {websocket.send("rooms")}, 1000);
 }
 
 function stateChange() {
