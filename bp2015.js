@@ -94,10 +94,10 @@ websocket.onopen = function(e) {
 	intervalPingPong = setInterval(function() {websocket.send("");}, 100);
 };
 
-function chat(index) {
+function chat(index, c, r) {
 	elementsIndexChat = index;
 	createElement(elementsIndexChat, "textarea");
-	elementSetAttributes(elementsIndexChat, [["cols", 100], ["readOnly", true], ["rows", 10], ["value", "Welcome to Best Project 2015 chat. Say anything!"]]);
+	elementSetAttributes(elementsIndexChat, [["cols", c], ["readOnly", true], ["rows", r], ["value", "Welcome to Best Project 2015 chat. Say anything!"]]);
 	createElement(elementsIndexChat + 1, "br");
 	createElementAppendTextNode(elementsIndexChat + 3, "span", " ");
 	createElementAddEventListener(elementsIndexChat + 4, "input", "click", function(e) {
@@ -107,7 +107,7 @@ function chat(index) {
 	});
 	elementSetAttributes(elementsIndexChat + 4, [["type", "submit"]]);
 	createElementAddEventListener(elementsIndexChat + 2, "input", "keypress", function(e) {if (e.which == 13) {elementEventListeners[elementsIndexChat + 4][0][1](e);}});
-	elementSetAttributes(elementsIndexChat + 2, [["maxLength", 100], ["size", 100]]);
+	elementSetAttributes(elementsIndexChat + 2, [["maxLength", c], ["size", c]]);
 	createElement(elementsIndexChat + 5, "br");
 }
 
@@ -172,7 +172,7 @@ function game() {
     elementSetAttributes(3, [["id", "map"], ["height", "1"], ["width", "1"]]);
     createElement(4, "div");
     elementSetAttributes(4, [["className", "pure-u-1-5"]]);
-    chat(5);
+    chat(5, 50, 10);
     createElementAppendTextNode(11, "button", "End Turn");
     elementSetAttributes(11, [["name", "turn"], ["id", "turn"], ["className", "pure-button"]]);
     createElementAppendTextNode(12, "p", "Remaining Distance: 3000");
@@ -354,7 +354,7 @@ function rooms() {
     elementSetStyle(1,[["height","100%"]]);
 
     createElementAppendTextNode(2, "h1", "Welcome " + name);
-    chat(3);
+    chat(3, 150, 20);
     createElement(9, "br");
     createElementAddEventListener(10, "input", "click", function(e) {
 	location.reload();
