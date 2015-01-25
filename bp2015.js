@@ -172,7 +172,7 @@ function game() {
     elementSetAttributes(3, [["id", "map"], ["height", "1"], ["width", "1"]]);
     createElement(4, "div");
     elementSetAttributes(4, [["className", "pure-u-1-5"]]);
-    chat(5, 50, 10);
+    chat(5, 10, 20);
     createElementAppendTextNode(11, "button", "End Turn");
     elementSetAttributes(11, [["name", "turn"], ["id", "turn"], ["className", "pure-button"]]);
     createElementAppendTextNode(12, "p", "Remaining Distance: 3000");
