@@ -53,7 +53,7 @@ websocket.onmessage = function(e) {
 			if (i == rooms_.length) {rooms_ = [];}
 		}
 		for (var i = 0; i < rooms_.length; i++) {
-			var index = 15 + 4 * i;
+			var index = 18 + 4 * i;
 			var playerCount = 0;
 			var room = rooms_[i].split("");
 			for (var j = 2; j < room.length; j++) {if (room[j].split("")[0]) {playerCount++;}}
@@ -67,11 +67,11 @@ websocket.onmessage = function(e) {
 				createElementAddEventListener(index + 3, "input", "click", roomJoin);
 				elementSetAttributes(index + 3, [["type", "button"], ["value", "Join"]]);
 				elementAppendChildren(index, [index + 1, index + 2, index + 3]);
-				elementAppendChildren(10, [index]);
+				elementAppendChildren(13, [index]);
 			}
 		}
-		for (var i = 15 + 4 * rooms_.length; i < elements.length; i += 4) {elementRemoveChild(10, i);}
-		elements.splice(15 + 4 * rooms_.length, elements.length - (15 + 4 * rooms_.length));
+		for (var i = 18 + 4 * rooms_.length; i < elements.length; i += 4) {elementRemoveChild(13, i);}
+		elements.splice(18 + 4 * rooms_.length, elements.length - (18 + 4 * rooms_.length));
 	} else if (state == "wait") {
 		var room = e.data.split("");
 		if (room == "ready") {
@@ -352,7 +352,6 @@ function rooms() {
     createElement(1, "div");
     elementSetAttributes(1,[["className","pure-u-4-5"]]);
     elementSetStyle(1,[["height","100%"]]);
-
     createElementAppendTextNode(2, "h1", "Welcome " + name);
     chat(3);
     createElement(9, "br");
@@ -360,14 +359,10 @@ function rooms() {
 	location.reload();
 	login();
     });
-
-
-
     elementSetAttributes(10, [["type", "button"], ["id","Exit"],["value", "Exit"]]);
     createElement(11, "div");
     elementSetAttributes(11,[["className","pure-u-1-5"]]);
     elementSetStyle(11,[["height","100%"]]);
-
     createElementAddEventListener(12, "input", "click", function(e) {
 	state = "waitRoomNumber";
 	clearInterval(intervalRoomsGet);
