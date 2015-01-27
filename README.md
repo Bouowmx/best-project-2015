@@ -29,3 +29,8 @@ If the website is or becomes unresponsive, check your browser console; the serve
 * Serial Killer can kill
 * Red pointer to dead area
 * Players can vote to lynch
+
+###Known Issues
+* Players cannot see other players in the game room
+* Nothing happens when you end turn
+* There are no classes, roles, or killing
